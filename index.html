@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuyBit Trading Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="header">
+            <div id="logo-and-controls">
+                <div id="logo-container">
+                    <img src="BuyBit_logo.png" alt="BuyBit" id="logo">
+                </div>
+                <button id="game-rules-btn" class="btn header-btn compact">Zmień zasady gry</button>
+                <button id="leaderboard-btn" class="btn header-btn compact">Tabela wyników</button>
+                <button id="contact-btn" class="btn header-btn compact">Kontakt</button>
+                <div id="account-info">
+                    <span>Saldo: <span id="balance">$10000</span></span>
+                    <span id="total-pl-usd" class="neutral">($0.00)</span>
+                    <span id="total-pl-percent" class="neutral">(+0.00%)</span>
+                    <span>Pozostały czas: <span id="time-left">--:--</span></span>
+                </div>
+            </div>
+            <div id="header-controls">
+                <div id="asset-selection">
+                    <label for="asset">Wybierz aktywo:</label>
+                    <select id="asset">
+                        <option value="BTC">BTC/USD</option>
+                        <option value="ETH">ETH/USD</option>
+                    </select>
+                </div>
+                <div id="interval-selection">
+                    <label for="interval">Interwał:</label>
+                    <select id="interval">
+                        <option value="5m">M5</option>
+                        <option value="15m" selected>M15</option>
+                        <option value="1h">H1</option>
+                        <option value="4h">H4</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-content">
+            <div class="chart-and-right-panel-wrapper">
+                <div id="chart-container"></div>
+                <div id="right-panel">
+                    <div id="trade-controls">
+                        <div class="control-group" id="margin-mode-group">
+                            <label>Tryb Marży:</label>
+                            <div class="radio-group">
+                                <input type="radio" id="iso-mode" name="margin-mode" value="isolated" checked>
+                                <label for="iso-mode">Isolated</label>
+                                <input type="radio" id="cross-mode" name="margin-mode" value="cross">
+                                <label for="cross-mode">Cross</label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="amount">Kwota (USD):</label>
+                            <input type="range" id="amount-slider" min="1" max="10000" value="100">
+                            <input type="number" id="amount" value="100" min="1">
+                        </div>
+                        <div class="control-group">
+                            <div class="label-container">
+                                <label for="leverage">Dźwignia:</label>
+                                <span id="leverage-value">1x</span>
+                            </div>
+                            <input type="range" id="leverage" min="1" max="100" value="1">
+                        </div>
+                        <div class="control-group actions">
+                            <button id="long-btn" class="btn long">Long</button>
+                            <button id="short-btn" class="btn short">Short</button>
+                        </div>
+                         <div class="control-group">
+                            <button id="close-btn" class="btn" disabled>Zamknij Pozycję</button>
+                        </div>
+                    </div>
+
+                    <div id="position-info">
+                        <h2>Otwarta Pozycja</h2>
+                        <p>Kierunek: <span id="pos-direction">--</span></p>
+                        <p>Wielkość: <span id="pos-size">--</span></p>
+                        <p>Cena Wejścia: <span id="pos-entry-price">--</span></p>
+                        <p>Likwidacja: <span id="pos-liquidation-price">--</span></p>
+                        <p>P/L: <span id="pos-pl" class="neutral">$0.00</span></p>
+                    </div>
+                    <div id="next-candle-wrapper">
+                        <button id="next-candle-btn" class="btn">Następna Świeca (N)</button>
+                    </div>
+                </div>
+            </div>
+            <div id="indicator-controls">
+                <button id="toggle-rsi-btn" class="btn">RSI</button>
+                <button id="toggle-macd-btn" class="btn">MACD</button>
+                <button id="toggle-bb-btn" class="btn">Bollinger Bands</button>
+                <button id="toggle-ema-btn" class="btn">EMA</button>
+                <button id="toggle-tma-btn" class="btn">TMA Bands</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <div id="notification-popup" class="hidden">
+        <p>Gra zrestartowana!</p>
+    </div>
+
+    <div id="end-game-modal" class="hidden">
+        <div class="modal-content">
+            <h2 id="end-game-title">Koniec Gry!</h2>
+            <p id="end-game-message"></p>
+            <p id="end-game-percentage-pl"></p>
+            <p id="end-game-efficiency"></p>
+            <div class="end-game-buttons">
+                <button id="save-score-btn" class="btn primary">Zapisz w tabeli wyników</button>
+                <button id="end-game-ok-btn" class="btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="welcome-modal" class="hidden">
+        <div class="modal-content welcome-modal">
+            <div class="welcome-logo">
+                <img src="BuyBit_logo.png" alt="BuyBit" class="welcome-logo-img">
+            </div>
+            <h2>Witaj w BuyBit, symulatorze Krypto Tradera!</h2>
+            <div class="welcome-content">
+                <p>Przetestuj swoje umiejętności w tradingu kryptowalut bez ryzyka!</p>
+                <div class="welcome-buttons">
+                    <button id="welcome-rules-btn" class="btn">Ustaw zasady</button>
+                    <button id="welcome-start-btn" class="btn primary">Rozpocznij nową grę</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-rules-modal" class="hidden">
+        <div class="modal-content rules-modal">
+            <h2>Zasady gry</h2>
+            <div class="rules-content">
+                <div class="rule-section">
+                    <h3>Ustawienia gry</h3>
+                    <div class="setting-group">
+                        <label for="game-duration">Długość gry (liczba świec):</label>
+                        <input type="number" id="game-duration" min="50" max="500" value="200">
+                    </div>
+                    <div class="setting-group">
+                        <label for="auto-candles">Automatyczne przełączanie świec:</label>
+                        <input type="checkbox" id="auto-candles">
+                    </div>
+                    <div class="setting-group" id="auto-speed-group">
+                        <label for="auto-speed">Szybkość automatyczna (sekundy):</label>
+                        <input type="range" id="auto-speed" min="1" max="10" value="3">
+                        <span id="auto-speed-value">3s</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="simulate-fees">Symuluj prowizje:</label>
+                        <input type="checkbox" id="simulate-fees">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="rules-cancel-btn" class="btn">Anuluj</button>
+                <button id="rules-apply-btn" class="btn">Zastosuj i rozpocznij nową grę</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-score-modal" class="hidden">
+        <div class="modal-content save-score-modal">
+            <h2>Zapisz swój wynik</h2>
+            <div class="score-summary">
+                <p>Końcowy wynik: <span id="final-score">$0</span></p>
+                <p>Zysk/Strata: <span id="final-pl">+0.00%</span></p>
+                <p>Skuteczność: <span id="final-efficiency">0%</span></p>
+            </div>
+            <div class="name-input-group">
+                <label for="player-name">Wprowadź swoje imię:</label>
+                <input type="text" id="player-name" maxlength="20" placeholder="Twoje imię">
+            </div>
+            <div class="modal-buttons">
+                <button id="cancel-save-btn" class="btn">Anuluj</button>
+                <button id="confirm-save-btn" class="btn primary">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="hidden">
+        <div class="modal-content leaderboard-modal">
+            <h2>Tabela wyników</h2>
+            <div class="leaderboard-controls">
+                <button id="clear-leaderboard" class="btn danger">Wyczyść tabelę</button>
+            </div>
+            <div id="leaderboard-content">
+                <div class="leaderboard-empty">
+                    <p>Brak wyników do wyświetlenia.</p>
+                    <p>Zagraj w grę i zapisz swój wynik!</p>
+                </div>
+            </div>
+            <div class="support-section">
+                <hr class="separator">
+                <p class="support-text">
+                    Jeśli podoba ci się gra wesprzyj mnie - mój adres ETH:<br>
+                    <span class="eth-address">0xdbc962AD2FAE64910764dd513652fdCEeb9D7139</span>
+                </p>
+            </div>
+            <div class="modal-buttons">
+                <button id="close-leaderboard-btn" class="btn">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="hidden">
+        <div class="modal-content contact-modal">
+            <h2>Kontakt</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <p class="creator-info">Stworzył Topciu, 2025</p>
+                    <div class="email-section">
+                        <p class="contact-label">Email:</p>
+                        <span class="email-address">topsoft.pl@gmail.com</span>
+                    </div>
+                    <div class="donation-section">
+                        <p class="donation-label">Darowizna na adres ETH:</p>
+                        <span class="eth-address">0xdbc962AD2FAE64910764dd513652fdCEeb9D7139</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="close-contact-btn" class="btn">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
