@@ -1,4 +1,97 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Wykrywanie urządzeń mobilnych
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    // Dodaj klasę mobile do body jeśli to urządzenie mobilne
+    if (isMobile) {
+        document.body.classList.add('mobile');
+        console.log('Wykryto urządzenie mobilne');
+    }
+    
+    // Nasłuchiwanie na zmiany orientacji i rozmiaru ekranu
+    function handleOrientationChange() {
+        const currentIsMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        
+        if (currentIsMobile && !document.body.classList.contains('mobile')) {
+            document.body.classList.add('mobile');
+            console.log('Przełączono na widok mobilny');
+        } else if (!currentIsMobile && document.body.classList.contains('mobile')) {
+            document.body.classList.remove('mobile');
+            console.log('Przełączono na widok desktopowy');
+        }
+        
+        // Przeładuj wykres jeśli istnieje
+        if (chart) {
+            setTimeout(() => {
+                chart.timeScale().fitContent();
+            }, 100);
+        }
+    }
+    
+    // Nasłuchiwanie na zmiany rozmiaru okna i orientacji
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleOrientationChange, 100);
+    });
+    
+    // Dodatkowe funkcje mobilne
+    if (isMobile) {
+        // Zapobiega zoom przy podwójnym dotknięciu
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Dodaj wskazówki dla użytkowników mobilnych
+        console.log('Tryb mobilny aktywny - skróty klawiszowe wyłączone');
+        
+        // Obsługa swipe gestów dla przełączania świec
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (!touchStartX || !touchStartY) {
+                return;
+            }
+            
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // Sprawdź czy to swipe poziomy (więcej poziomy niż pionowy)
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // Swipe w lewo = następna świeca
+                if (diffX > 50 && !nextCandleBtn.disabled) {
+                    showNextCandle();
+                    touchStartX = 0;
+                    touchStartY = 0;
+                }
+            }
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            touchStartX = 0;
+            touchStartY = 0;
+        });
+    }
+    
     // --- USTAWIENIA GRY ---
     const STARTING_BALANCE = 1000;
     const MAX_HISTORY_CANDLES = 100;
@@ -551,6 +644,14 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         if (!welcomeModal) return;
         welcomeModal.classList.remove('hidden');
         welcomeModal.classList.add('show');
+        
+        // Dodaj informację o trybie mobilnym
+        if (document.body.classList.contains('mobile')) {
+            const welcomeContent = document.querySelector('.welcome-content p');
+            if (welcomeContent) {
+                welcomeContent.innerHTML = 'Przetestuj swoje umiejętności w tradingu kryptowalut bez ryzyka!<br><small style="color: #f7931a;">Tryb mobilny: Przesuń palcem w lewo aby przejść do następnej świecy</small>';
+            }
+        }
     }
 
     function hideWelcomeModal() {
@@ -639,6 +740,22 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             chart = null;
         }
         chartContainer.innerHTML = '';
+
+        // Dostosuj wysokość dla urządzeń mobilnych
+        function adjustChartHeight() {
+            if (document.body.classList.contains('mobile')) {
+                const screenHeight = window.innerHeight;
+                const headerHeight = document.getElementById('header').offsetHeight;
+                const controlsHeight = document.getElementById('header-controls') ? document.getElementById('header-controls').offsetHeight : 0;
+                const availableHeight = screenHeight - headerHeight - controlsHeight - 150; // 150px margines na inne elementy
+                
+                const mobileHeight = Math.max(300, Math.min(availableHeight * 0.5, 400));
+                chartContainer.style.height = mobileHeight + 'px';
+                console.log('Mobile chart height adjusted to:', mobileHeight);
+            }
+        }
+        
+        adjustChartHeight();
 
         // Upewnij się, że kontener ma prawidłowe wymiary
         const containerRect = chartContainer.getBoundingClientRect();
@@ -828,9 +945,21 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         
         resizeObserver.observe(chartContainer);
         
+        // Dodaj obsługę touch eventów dla urządzeń mobilnych
+        if (document.body.classList.contains('mobile')) {
+            chartContainer.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            chartContainer.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+        }
+        
         // Dodaj event listener dla window resize
         window.addEventListener('resize', () => {
             if (chart && chartContainer) {
+                adjustChartHeight(); // Dostosuj wysokość przy resize
                 setTimeout(() => {
                     const containerRect = chartContainer.getBoundingClientRect();
                     const width = Math.max(containerRect.width, 400);
@@ -1741,6 +1870,11 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     });
 
     document.addEventListener('keydown', (event) => {
+        // Pomiń skróty klawiszowe na urządzeniach mobilnych
+        if (document.body.classList.contains('mobile')) {
+            return;
+        }
+        
         // Zablokuj klawisz 'N' jeśli modal zakończenia gry jest widoczny
         if (endGameModal.classList.contains('show')) {
             return;

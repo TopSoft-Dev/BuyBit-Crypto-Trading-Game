@@ -1058,6 +1058,474 @@ input[type="range"]:hover::-moz-range-thumb {
     font-size: 14px;
 }
 
+/* Mobile-specific styles */
+.mobile {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile .app-container {
+    padding: 5px;
+    min-height: 100vh;
+    max-width: 100vw;
+}
+
+.mobile .header {
+    padding: 8px;
+}
+
+.mobile #logo-and-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mobile .header .logo {
+    order: 1;
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.mobile .header .header-buttons {
+    order: 2;
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.mobile .header .header-btn {
+    flex: 1;
+    min-width: 0;
+    font-size: 11px;
+    padding: 6px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile .header #account-info {
+    order: 3;
+    flex: 0 0 auto;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.mobile #header-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.mobile #asset-selection,
+.mobile #interval-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mobile #asset-selection label,
+.mobile #interval-selection label {
+    font-size: 12px;
+}
+
+.mobile #asset-selection select,
+.mobile #interval-selection select {
+    padding: 8px;
+    font-size: 14px;
+}
+
+.mobile .main-content {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile .chart-and-right-panel-wrapper {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile .chart-section {
+    order: 1;
+    width: 100%;
+    height: 50vh;
+    min-height: 300px;
+}
+
+.mobile .chart-container {
+    height: 100%;
+    border-radius: 6px;
+}
+
+.mobile .trading-panel {
+    order: 2;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    margin-left: 0;
+    margin-top: 0;
+}
+
+.mobile .controls-row {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile .control-group {
+    width: 100%;
+}
+
+.mobile .control-group label {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.mobile .control-group select,
+.mobile .control-group input {
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.mobile .amount-controls {
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mobile .amount-input-group {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.mobile .amount-input-group input {
+    width: 100%;
+}
+
+.mobile .leverage-control {
+    margin: 10px 0;
+}
+
+.mobile .leverage-control input[type="range"] {
+    width: 100%;
+    height: 30px;
+}
+
+.mobile .trading-buttons {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.mobile .trading-buttons .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.mobile .position-info {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.mobile .position-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.mobile .position-details div {
+    padding: 4px;
+    background-color: var(--secondary-color);
+    border-radius: 4px;
+    text-align: center;
+}
+
+.mobile .indicators-panel {
+    order: 3;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.mobile .indicators-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 5px;
+}
+
+.mobile .indicators-buttons .btn {
+    padding: 6px 4px;
+    font-size: 10px;
+    border-radius: 4px;
+}
+
+.mobile .game-controls {
+    order: 4;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.mobile .game-controls .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* Mobile modal adjustments */
+.mobile .modal-content {
+    width: 95%;
+    max-width: 95%;
+    margin: 10px;
+    padding: 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.mobile .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.mobile .modal-content .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    margin: 5px;
+}
+
+.mobile .game-rules-content {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.mobile .rules-section {
+    margin-bottom: 15px;
+}
+
+.mobile .rules-section h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.mobile .settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mobile .setting-group {
+    width: 100%;
+}
+
+.mobile .setting-group label {
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.mobile .setting-group input,
+.mobile .setting-group select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.mobile .leaderboard-table {
+    font-size: 11px;
+    overflow-x: auto;
+}
+
+.mobile .leaderboard-table th,
+.mobile .leaderboard-table td {
+    padding: 4px 2px;
+    min-width: 60px;
+}
+
+.mobile .contact-modal {
+    width: 95%;
+    max-width: 95%;
+}
+
+.mobile .contact-info {
+    padding: 15px;
+}
+
+.mobile .creator-info {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.mobile .email-address,
+.mobile .eth-address {
+    font-size: 12px;
+    padding: 6px 8px;
+    word-break: break-all;
+}
+
+/* Dodatkowe style mobilne */
+.mobile body {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.mobile .btn {
+    min-height: 44px; /* Minimalna wysokość dla touch targets */
+    touch-action: manipulation;
+}
+
+.mobile input[type="range"] {
+    min-height: 44px;
+}
+
+.mobile select,
+.mobile input[type="number"] {
+    min-height: 44px;
+    font-size: 16px; /* Zapobiega zoom na iOS */
+}
+
+.mobile .radio-group label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.mobile .welcome-modal {
+    margin: 10px;
+    padding: 20px;
+}
+
+.mobile .welcome-logo-img {
+    max-width: 120px;
+    height: auto;
+}
+
+.mobile .welcome-buttons {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile .welcome-buttons .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+}
+
+/* Ukryj tekst skrótów klawiszowych na mobilnych */
+.mobile #next-candle-btn {
+    font-size: 14px;
+}
+
+.mobile #next-candle-btn::after {
+    content: none;
+}
+
+/* Lepsze odstępy na mobilnych */
+.mobile .control-group {
+    margin-bottom: 15px;
+}
+
+.mobile .control-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+/* Scrollable content dla długich modali */
+.mobile .modal-content {
+    max-height: 85vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Zwiększ rozmiar przycisków wskaźników */
+.mobile .indicators-buttons .btn {
+    min-height: 40px;
+    padding: 8px 6px;
+    font-size: 11px;
+}
+
+/* Orientacja pozioma na urządzeniach mobilnych */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .mobile .main-content {
+        flex-direction: row;
+    }
+    
+    .mobile .chart-and-right-panel-wrapper {
+        flex-direction: row;
+        height: 100vh;
+    }
+    
+    .mobile .chart-section {
+        width: 60%;
+        height: 100vh;
+    }
+    
+    .mobile .trading-panel {
+        width: 40%;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 8px;
+    }
+    
+    .mobile .indicators-panel {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        background-color: var(--secondary-color);
+        border-radius: 8px;
+        padding: 8px;
+        z-index: 10;
+    }
+    
+    .mobile .indicators-buttons {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    
+    .mobile .game-controls {
+        position: absolute;
+        bottom: 60px;
+        right: 10px;
+        background-color: var(--secondary-color);
+        border-radius: 8px;
+        padding: 8px;
+        z-index: 10;
+    }
+    
+    .mobile #header {
+        padding: 4px 8px;
+    }
+    
+    .mobile #header-controls {
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .mobile #asset-selection,
+    .mobile #interval-selection {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .mobile .control-group {
+        margin-bottom: 8px;
+    }
+    
+    .mobile .position-details {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
 @media (max-width: 768px) {
     .leaderboard-controls {
         flex-direction: column;

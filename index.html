@@ -2,21 +2,23 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BuyBit Trading Simulator</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
-    <div id="game-container">
-        <div id="header">
+    <div id="game-container" class="app-container">
+        <div id="header" class="header">
             <div id="logo-and-controls">
-                <div id="logo-container">
+                <div id="logo-container" class="logo">
                     <img src="BuyBit_logo.png" alt="BuyBit" id="logo">
                 </div>
-                <button id="game-rules-btn" class="btn header-btn compact">Zmień zasady gry</button>
-                <button id="leaderboard-btn" class="btn header-btn compact">Tabela wyników</button>
-                <button id="contact-btn" class="btn header-btn compact">Kontakt</button>
+                <div class="header-buttons">
+                    <button id="game-rules-btn" class="btn header-btn compact">Zmień zasady gry</button>
+                    <button id="leaderboard-btn" class="btn header-btn compact">Tabela wyników</button>
+                    <button id="contact-btn" class="btn header-btn compact">Kontakt</button>
+                </div>
                 <div id="account-info">
                     <span>Saldo: <span id="balance">$10000</span></span>
                     <span id="total-pl-usd" class="neutral">($0.00)</span>
@@ -44,11 +46,11 @@
             </div>
         </div>
 
-        <div id="main-content">
+        <div id="main-content" class="main-content">
             <div class="chart-and-right-panel-wrapper">
-                <div id="chart-container"></div>
-                <div id="right-panel">
-                    <div id="trade-controls">
+                <div id="chart-container" class="chart-section chart-container"></div>
+                <div id="right-panel" class="trading-panel">
+                    <div id="trade-controls" class="controls-row">
                         <div class="control-group" id="margin-mode-group">
                             <label>Tryb Marży:</label>
                             <div class="radio-group">
@@ -58,19 +60,21 @@
                                 <label for="cross-mode">Cross</label>
                             </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group amount-controls">
                             <label for="amount">Kwota (USD):</label>
-                            <input type="range" id="amount-slider" min="1" max="10000" value="100">
-                            <input type="number" id="amount" value="100" min="1">
+                            <div class="amount-input-group">
+                                <input type="range" id="amount-slider" min="1" max="10000" value="100">
+                                <input type="number" id="amount" value="100" min="1">
+                            </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group leverage-control">
                             <div class="label-container">
                                 <label for="leverage">Dźwignia:</label>
                                 <span id="leverage-value">1x</span>
                             </div>
                             <input type="range" id="leverage" min="1" max="100" value="1">
                         </div>
-                        <div class="control-group actions">
+                        <div class="control-group actions trading-buttons">
                             <button id="long-btn" class="btn long">Long</button>
                             <button id="short-btn" class="btn short">Short</button>
                         </div>
@@ -79,25 +83,29 @@
                         </div>
                     </div>
 
-                    <div id="position-info">
+                    <div id="position-info" class="position-info">
                         <h2>Otwarta Pozycja</h2>
-                        <p>Kierunek: <span id="pos-direction">--</span></p>
-                        <p>Wielkość: <span id="pos-size">--</span></p>
-                        <p>Cena Wejścia: <span id="pos-entry-price">--</span></p>
-                        <p>Likwidacja: <span id="pos-liquidation-price">--</span></p>
-                        <p>P/L: <span id="pos-pl" class="neutral">$0.00</span></p>
+                        <div class="position-details">
+                            <div>Kierunek: <span id="pos-direction">--</span></div>
+                            <div>Wielkość: <span id="pos-size">--</span></div>
+                            <div>Cena Wejścia: <span id="pos-entry-price">--</span></div>
+                            <div>Likwidacja: <span id="pos-liquidation-price">--</span></div>
+                            <div>P/L: <span id="pos-pl" class="neutral">$0.00</span></div>
+                        </div>
                     </div>
-                    <div id="next-candle-wrapper">
+                    <div id="next-candle-wrapper" class="game-controls">
                         <button id="next-candle-btn" class="btn">Następna Świeca (N)</button>
                     </div>
                 </div>
             </div>
-            <div id="indicator-controls">
-                <button id="toggle-rsi-btn" class="btn">RSI</button>
-                <button id="toggle-macd-btn" class="btn">MACD</button>
-                <button id="toggle-bb-btn" class="btn">Bollinger Bands</button>
-                <button id="toggle-ema-btn" class="btn">EMA</button>
-                <button id="toggle-tma-btn" class="btn">TMA Bands</button>
+            <div id="indicator-controls" class="indicators-panel">
+                <div class="indicators-buttons">
+                    <button id="toggle-rsi-btn" class="btn">RSI</button>
+                    <button id="toggle-macd-btn" class="btn">MACD</button>
+                    <button id="toggle-bb-btn" class="btn">Bollinger Bands</button>
+                    <button id="toggle-ema-btn" class="btn">EMA</button>
+                    <button id="toggle-tma-btn" class="btn">TMA Bands</button>
+                </div>
             </div>
         </div>
     </div>
