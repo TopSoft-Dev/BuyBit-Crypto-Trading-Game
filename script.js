@@ -870,10 +870,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
 
         // Upewnij się, że kontener ma prawidłowe wymiary
         const containerRect = activeChartContainer.getBoundingClientRect();
-        // W wersji mobilnej, odejmij padding-right (60px) od szerokości
-        const effectiveWidth = document.body.classList.contains('mobile') ? 
-            containerRect.width - 60 : containerRect.width;
-        const width = Math.max(effectiveWidth, 300);
+        // Użyj pełnej szerokości kontenera
+        const width = Math.max(containerRect.width, 300);
         const height = Math.max(containerRect.height, 300);
         
         console.log('Chart container dimensions:', width, 'x', height);
@@ -898,11 +896,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                     top: 0.1,
                     bottom: 0.1,
                 },
-                // W wersji mobilnej, upewnij się że price scale jest widoczny
                 autoScale: true,
-                mode: document.body.classList.contains('mobile') ? 
-                    LightweightCharts.PriceScaleMode.Normal : 
-                    LightweightCharts.PriceScaleMode.Normal,
+                mode: LightweightCharts.PriceScaleMode.Normal,
             },
             handleScroll: {
                 mouseWheel: true,
@@ -1052,16 +1047,12 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             if (chart && activeChartContainer) {
                 const containerRect = activeChartContainer.getBoundingClientRect();
                 
-                // W wersji mobilnej, sprawdź czy kontener jest widoczny na ekranie
-                if (document.body.classList.contains('mobile')) {
-                    const isVisible = containerRect.top < window.innerHeight && containerRect.bottom > 0;
-                    if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
-                }
+                // Sprawdź czy kontener jest widoczny na ekranie
+                const isVisible = containerRect.top < window.innerHeight && containerRect.bottom > 0;
+                if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
                 
-                // W wersji mobilnej, odejmij padding-right od szerokości
-                const effectiveWidth = document.body.classList.contains('mobile') ? 
-                    containerRect.width - 60 : containerRect.width;
-                const width = Math.max(effectiveWidth, 300);
+                // Użyj pełnej szerokości kontenera
+                const width = Math.max(containerRect.width, 300);
                 const height = Math.max(containerRect.height, 300);
                 
                 // Aktualizuj tylko jeśli rozmiar rzeczywiście się zmienił
@@ -1092,10 +1083,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 adjustChartHeight(); // Dostosuj wysokość przy resize
                 setTimeout(() => {
                     const containerRect = activeChartContainer.getBoundingClientRect();
-                    // W wersji mobilnej, odejmij padding-right od szerokości
-                    const effectiveWidth = document.body.classList.contains('mobile') ? 
-                        containerRect.width - 60 : containerRect.width;
-                    const width = Math.max(effectiveWidth, 300);
+                    // Użyj pełnej szerokości kontenera
+                    const width = Math.max(containerRect.width, 300);
                     const height = Math.max(containerRect.height, 300);
                     chart.applyOptions({
                         width: width,
