@@ -1465,6 +1465,7 @@ body:not(.mobile) .mobile-only {
     margin: 0 10px 10px 10px;
     border: 2px solid var(--bybit-orange);
     box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
+    overflow: visible; /* Pozwól na widoczność price scale */
 }
 
 .mobile .chart-section {
@@ -1477,8 +1478,17 @@ body:not(.mobile) .mobile-only {
 .mobile .chart-container {
     height: 100%;
     border-radius: 6px;
-    overflow: hidden;
+    overflow: visible; /* Pozwól na widoczność price scale */
     border: 1px solid var(--bybit-orange);
+    padding-right: 60px; /* Miejsce na price scale */
+    box-sizing: border-box;
+    position: relative; /* Dla pozycjonowania price scale */
+}
+
+/* Upewnij się, że wykres mobilny ma widoczny price scale */
+.mobile .chart-container > div {
+    position: relative !important;
+    overflow: visible !important;
 }
 
 /* Karta tradingowa */

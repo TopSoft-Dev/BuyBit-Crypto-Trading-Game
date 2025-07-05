@@ -560,7 +560,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                         
                         // Dodaj duży margines po lewej (5 świec) i mały po prawej (2 świece)
                         const leftMargin = candleInterval * 5;
-                        const rightMargin = candleInterval * 2;
+                        const rightMargin = candleInterval * 4; // Więcej miejsca na price scale
                         
                         const fromTime = firstTime - leftMargin;
                         const toTime = lastTime + rightMargin;
@@ -636,9 +636,9 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                         const candleInterval = visibleCandles.length > 1 ? 
                             visibleCandles[1].time - visibleCandles[0].time : 900;
                         
-                        // Duży margines po lewej (5 świec) i mały po prawej (2 świece)
+                        // Duży margines po lewej (5 świec) i większy po prawej (4 świece) dla price scale
                         const leftMargin = candleInterval * 5;
-                        const rightMargin = candleInterval * 2;
+                        const rightMargin = candleInterval * 4; // Więcej miejsca na price scale
                         
                         const fromTime = firstTime - leftMargin;
                         const toTime = lastTime + rightMargin;
@@ -869,7 +869,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
 
         // Upewnij się, że kontener ma prawidłowe wymiary
         const containerRect = activeChartContainer.getBoundingClientRect();
-        const width = Math.max(containerRect.width, 400);
+        // W wersji mobilnej, odejmij padding-right (60px) od szerokości
+        const effectiveWidth = document.body.classList.contains('mobile') ? 
+            containerRect.width - 60 : containerRect.width;
+        const width = Math.max(effectiveWidth, 300);
         const height = Math.max(containerRect.height, 300);
         
         console.log('Chart container dimensions:', width, 'x', height);
@@ -890,6 +893,15 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             rightPriceScale: {
                 visible: true,
                 borderColor: '#7164FA',
+                scaleMargins: {
+                    top: 0.1,
+                    bottom: 0.1,
+                },
+                // W wersji mobilnej, upewnij się że price scale jest widoczny
+                autoScale: true,
+                mode: document.body.classList.contains('mobile') ? 
+                    LightweightCharts.PriceScaleMode.Normal : 
+                    LightweightCharts.PriceScaleMode.Normal,
             },
             handleScroll: {
                 mouseWheel: true,
@@ -1045,7 +1057,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                     if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
                 }
                 
-                const width = Math.max(containerRect.width, 400);
+                // W wersji mobilnej, odejmij padding-right od szerokości
+                const effectiveWidth = document.body.classList.contains('mobile') ? 
+                    containerRect.width - 60 : containerRect.width;
+                const width = Math.max(effectiveWidth, 300);
                 const height = Math.max(containerRect.height, 300);
                 
                 // Aktualizuj tylko jeśli rozmiar rzeczywiście się zmienił
@@ -1076,7 +1091,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 adjustChartHeight(); // Dostosuj wysokość przy resize
                 setTimeout(() => {
                     const containerRect = activeChartContainer.getBoundingClientRect();
-                    const width = Math.max(containerRect.width, 400);
+                    // W wersji mobilnej, odejmij padding-right od szerokości
+                    const effectiveWidth = document.body.classList.contains('mobile') ? 
+                        containerRect.width - 60 : containerRect.width;
+                    const width = Math.max(effectiveWidth, 300);
                     const height = Math.max(containerRect.height, 300);
                     chart.applyOptions({
                         width: width,
