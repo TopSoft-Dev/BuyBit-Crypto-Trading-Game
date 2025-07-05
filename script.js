@@ -211,6 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const posEntryPriceMobileEl = document.getElementById('pos-entry-price-mobile');
     const posLiquidationPriceMobileEl = document.getElementById('pos-liquidation-price-mobile');
     const posPlMobileEl = document.getElementById('pos-pl-mobile');
+    
+    // Kompaktowe elementy pozycji w karcie wykresu
+    const posDirectionCompactEl = document.getElementById('pos-direction-compact');
+    const posPlCompactEl = document.getElementById('pos-pl-compact');
     const marginModeMobileInputs = document.querySelectorAll('input[name="margin-mode-mobile"]');
     const notificationPopup = document.getElementById('notification-popup');
     const toggleRsiBtn = document.getElementById('toggle-rsi-btn');
@@ -929,17 +933,23 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         const resizeObserver = new ResizeObserver(entries => {
             if (chart && activeChartContainer) {
                 const containerRect = activeChartContainer.getBoundingClientRect();
+                
+                // Sprawdź czy kontener jest widoczny na ekranie
+                const isVisible = containerRect.top < window.innerHeight && containerRect.bottom > 0;
+                if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
+                
                 const width = Math.max(containerRect.width, 400);
                 const height = Math.max(containerRect.height, 300);
                 
                 // Aktualizuj tylko jeśli rozmiar rzeczywiście się zmienił
-                if (Math.abs(width - lastWidth) > 5 || Math.abs(height - lastHeight) > 5) {
+                if (Math.abs(width - lastWidth) > 10 || Math.abs(height - lastHeight) > 10) {
                     chart.applyOptions({
                         width: width,
                         height: height
                     });
                     lastWidth = width;
                     lastHeight = height;
+                    console.log('Chart resized to:', width, 'x', height);
                 }
             }
         });
@@ -1077,6 +1087,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         const hasPositions = hasActivePositions();
         nextCandleBtn.disabled = !gameState.isGameReady;
         closeBtn.disabled = !hasPositions;
+        
+        // Aktualizuj również przyciski mobilne
+        if (nextCandleMobileBtn) nextCandleMobileBtn.disabled = !gameState.isGameReady;
+        if (closeMobileBtn) closeMobileBtn.disabled = !hasPositions;
         
         // Ukryj przycisk "Następna świeca" w trybie automatycznym
         if (gameSettings.autoCandles) {
@@ -1286,6 +1300,16 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 posPlMobileEl.textContent = pnlText;
                 posPlMobileEl.className = pnlClass;
             }
+            
+            // Kompaktowe elementy w karcie wykresu
+            if (posDirectionCompactEl) {
+                posDirectionCompactEl.textContent = direction;
+                posDirectionCompactEl.className = directionClass;
+            }
+            if (posPlCompactEl) {
+                posPlCompactEl.textContent = pnlText;
+                posPlCompactEl.className = pnlClass;
+            }
         } else {
             // Desktop
             posDirectionEl.textContent = '--';
@@ -1311,6 +1335,16 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             if (posPlMobileEl) {
                 posPlMobileEl.textContent = '$0.00';
                 posPlMobileEl.className = 'neutral';
+            }
+            
+            // Kompaktowe elementy w karcie wykresu
+            if (posDirectionCompactEl) {
+                posDirectionCompactEl.textContent = '--';
+                posDirectionCompactEl.className = 'neutral';
+            }
+            if (posPlCompactEl) {
+                posPlCompactEl.textContent = '$0.00';
+                posPlCompactEl.className = 'neutral';
             }
         }
     }

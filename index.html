@@ -87,17 +87,25 @@
             <div class="chart-card mobile-only">
                 <!-- Saldo i czas przeniesione do karty wykresu -->
                 <div class="balance-info-chart">
-                    <span>Saldo: <span id="balance-mobile">$10000</span></span>
-                    <span id="total-pl-mobile" class="neutral">($0.00)</span>
-                    <span>Czas: <span id="time-left-mobile">--:--</span></span>
+                    <div class="balance-row">
+                        <span>Saldo: <span id="balance-mobile">$10000</span></span>
+                        <span id="total-pl-mobile" class="neutral">($0.00)</span>
+                        <span>Czas: <span id="time-left-mobile">--:--</span></span>
+                    </div>
+                    <div class="position-info-compact">
+                        <span>Pozycja: <span id="pos-direction-compact">--</span></span>
+                        <span>P/L: <span id="pos-pl-compact" class="neutral">$0.00</span></span>
+                    </div>
                 </div>
                 
                 <div id="chart-container-mobile" class="chart-section chart-container" style="height: 45vh; min-height: 280px;"></div>
                 
                 <!-- Przyciski tradingowe przeniesione pod wykres -->
                 <div class="trading-buttons-chart">
-                    <button id="long-btn-mobile" class="btn long">Long</button>
-                    <button id="short-btn-mobile" class="btn short">Short</button>
+                    <div class="long-short-buttons">
+                        <button id="long-btn-mobile" class="btn long">Long</button>
+                        <button id="short-btn-mobile" class="btn short">Short</button>
+                    </div>
                     <button id="close-btn-mobile" class="btn" disabled>Zamknij Pozycję</button>
                 </div>
                 
