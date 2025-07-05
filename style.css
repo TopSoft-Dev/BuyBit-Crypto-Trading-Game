@@ -2085,3 +2085,21 @@ body:not(.mobile) .mobile-only {
 .mobile #header-controls {
     display: none !important;
 }
+
+/* Style dla przycisków końcowych w wersji mobilnej */
+.mobile .end-game-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.mobile .end-game-buttons .btn {
+    width: 80%;
+    max-width: 250px;
+    padding: 12px 20px;
+    font-size: 16px;
+    text-align: center;
+}

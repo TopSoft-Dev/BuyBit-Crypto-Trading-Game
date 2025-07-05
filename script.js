@@ -315,6 +315,20 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         return totalLeveragedSize / totalSize;
     }
 
+    // Funkcja do obliczania aktualnego salda (dostępne + wartość pozycji z P/L)
+    function calculateCurrentBalance() {
+        if (!hasActivePositions()) {
+            return gameState.availableBalance;
+        }
+        
+        const currentPrice = historicalData[gameState.currentDataIndex - 1]?.close || 0;
+        const totalPositionSize = getTotalPositionSize();
+        const currentPnl = calculateTotalPnl(currentPrice);
+        
+        // Saldo = dostępne środki + wartość pozycji + P/L
+        return gameState.availableBalance + totalPositionSize + currentPnl;
+    }
+
     function calculateLiquidationPrice() {
         if (gameState.positions.length === 0) return 0;
         
@@ -329,10 +343,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 ? avgEntryPrice - liquidationDistance 
                 : avgEntryPrice + liquidationDistance;
         } else {
-            // W trybie cross, likwidacja następuje gdy całe saldo konta = 0
+            // W trybie cross, likwidacja następuje gdy całe dostępne saldo konta = 0
             const totalPositionValue = getTotalPositionSize();
             const totalLeveragedValue = totalPositionValue * totalLeverage;
-            const liquidationDistance = (gameState.balance / totalLeveragedValue) * avgEntryPrice;
+            const liquidationDistance = (gameState.availableBalance / totalLeveragedValue) * avgEntryPrice;
             return gameState.activeDirection === 'long' 
                 ? avgEntryPrice - liquidationDistance 
                 : avgEntryPrice + liquidationDistance;
@@ -720,7 +734,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         };
         
         gameState = {
-            balance: STARTING_BALANCE,
+            balance: STARTING_BALANCE, // Wyświetlane saldo (dostępne + wartość pozycji z P/L)
+            availableBalance: STARTING_BALANCE, // Dostępne środki (nie zablokowane w pozycjach)
             asset: assetSelect.value,
             interval: intervalSelect.value, // Dodany interwał
             candlesPassed: 0,
@@ -742,7 +757,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         };
         // Ustaw początkowe wypełnienie suwaków
         updateSliderFill(amountSlider);
-        updateSliderFill(leverageInput);
+        if (amountMobileSlider) updateSliderFill(amountMobileSlider);
     }
 
     // Funkcje obsługi welcome modal
@@ -1181,6 +1196,9 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     }
 
     function updateUI() {
+        // Oblicz aktualne saldo z P/L pozycji
+        gameState.balance = calculateCurrentBalance();
+        
         balanceEl.textContent = `${formatNumber(gameState.balance)}`;
         timeLeftEl.textContent = `${gameState.gameDuration - gameState.candlesPassed} świec`;
         leverageValueEl.textContent = `${leverageInput.value}x`;
@@ -1247,19 +1265,19 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             if (shortMobileBtn) shortMobileBtn.disabled = false;
         }
 
-        // Aktualizuj maksymalną wartość suwaka i pola kwoty
+        // Aktualizuj maksymalną wartość suwaka i pola kwoty - używaj dostępnego salda
         if (!hasPositions) {
-            amountInput.max = gameState.balance;
-            amountSlider.max = gameState.balance;
-            if (amountMobileInput) amountMobileInput.max = gameState.balance;
-            if (amountMobileSlider) amountMobileSlider.max = gameState.balance;
+            amountInput.max = gameState.availableBalance;
+            amountSlider.max = gameState.availableBalance;
+            if (amountMobileInput) amountMobileInput.max = gameState.availableBalance;
+            if (amountMobileSlider) amountMobileSlider.max = gameState.availableBalance;
             
             // Skoryguj wartość suwaka, jeśli jest większa niż dostępne saldo
-            if (parseFloat(amountInput.value) > gameState.balance) {
-                amountInput.value = gameState.balance;
-                amountSlider.value = gameState.balance;
-                if (amountMobileInput) amountMobileInput.value = gameState.balance;
-                if (amountMobileSlider) amountMobileSlider.value = gameState.balance;
+            if (parseFloat(amountInput.value) > gameState.availableBalance) {
+                amountInput.value = gameState.availableBalance;
+                amountSlider.value = gameState.availableBalance;
+                if (amountMobileInput) amountMobileInput.value = gameState.availableBalance;
+                if (amountMobileSlider) amountMobileSlider.value = gameState.availableBalance;
             }
             updateSliderFill(amountSlider); // Zaktualizuj wypełnienie po ewentualnej korekcie
             if (amountMobileSlider) updateSliderFill(amountMobileSlider);
@@ -1497,7 +1515,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         if (!gameState.isGameReady) return;
         const amount = parseFloat(amountInput.value);
         const leverage = parseInt(leverageInput.value);
-        if (amount <= 0 || amount > gameState.balance) {
+        if (amount <= 0 || amount > gameState.availableBalance) {
             alert("Nieprawidłowa kwota!");
             return;
         }
@@ -1531,7 +1549,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             gameState.activeDirection = direction;
         }
         
-        gameState.balance -= amount + fee; // Odejmij kwotę pozycji + prowizję
+        // Odejmij kwotę pozycji + prowizję od dostępnego salda (nie od wyświetlanego)
+        gameState.availableBalance -= amount + fee;
         // Nie zwiększaj totalTrades tutaj - będzie zwiększany przy zamknięciu pozycji
         
         const markerType = direction === 'long' ? 'arrowUp' : 'arrowDown';
@@ -1597,8 +1616,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             closeFee = positionValue * 0.001; // 0.1% prowizji
         }
         
-        // Zwróć całkowitą kwotę pozycji plus P/L minus prowizja za zamknięcie
-        gameState.balance += totalSize + pnl - closeFee;
+        // Zwróć całkowitą kwotę pozycji plus P/L minus prowizja za zamknięcie do dostępnego salda
+        gameState.availableBalance += totalSize + pnl - closeFee;
         
         // Zwiększ licznik wszystkich zagrań (jeden trade = jeden cykl otwarcie->zamknięcie)
         gameState.totalTrades++;
@@ -1635,10 +1654,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
 
     function handleLiquidation() {
         showNotification("Twoja pozycja została zlikwidowana!", 'error');
-        // W trybie Isolated tracisz tylko to, co zainwestowałeś (co już zostało odjęte od salda).
-        // W trybie Cross, całe saldo jest wyzerowane.
+        // W trybie Isolated tracisz tylko to, co zainwestowałeś (co już zostało odjęte od dostępnego salda).
+        // W trybie Cross, całe dostępne saldo jest wyzerowane.
         if (gameState.marginMode === 'cross') {
-            gameState.balance = 0;
+            gameState.availableBalance = 0;
         }
         // Zwiększ licznik wszystkich zagrań (jeden trade = jeden cykl otwarcie->likwidacja)
         gameState.totalTrades++;
@@ -1707,8 +1726,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                     isLiquidated = true;
                 }
             } else { // Tryb 'cross'
-                // Likwidacja, gdy strata zjada całe saldo konta
-                const totalEquity = gameState.balance + totalSize + pnl;
+                // Likwidacja, gdy strata zjada całe dostępne saldo konta
+                const totalEquity = gameState.availableBalance + totalSize + pnl;
                 if (totalEquity <= 0) {
                     isLiquidated = true;
                 }
@@ -1744,15 +1763,16 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     }
 
     function checkGameOver() {
-        // Koniec gry następuje TYLKO, gdy saldo spadnie do zera LUB gdy skończy się czas
+        // Koniec gry następuje TYLKO, gdy dostępne saldo spadnie do zera LUB gdy skończy się czas
         console.log('Sprawdzam koniec gry:', {
             balance: gameState.balance,
+            availableBalance: gameState.availableBalance,
             candlesPassed: gameState.candlesPassed,
             gameDuration: gameState.gameDuration,
             hasActivePositions: hasActivePositions()
         });
         
-        if (gameState.balance <= 0 && !hasActivePositions()) {
+        if (gameState.availableBalance <= 0 && !hasActivePositions()) {
             console.log('Koniec gry - bankructwo');
             endGame("lose");
         } else if (gameState.candlesPassed >= gameState.gameDuration) {
