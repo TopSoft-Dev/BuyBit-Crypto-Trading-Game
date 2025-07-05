@@ -55,41 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dodaj wskazówki dla użytkowników mobilnych
         console.log('Tryb mobilny aktywny - skróty klawiszowe wyłączone');
         
-        // Obsługa swipe gestów dla przełączania świec
-        let touchStartX = 0;
-        let touchStartY = 0;
-        
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchmove', function(e) {
-            if (!touchStartX || !touchStartY) {
-                return;
-            }
-            
-            const touchEndX = e.touches[0].clientX;
-            const touchEndY = e.touches[0].clientY;
-            
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
-            
-            // Sprawdź czy to swipe poziomy (więcej poziomy niż pionowy)
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                // Swipe w lewo = następna świeca
-                if (diffX > 50 && !nextCandleBtn.disabled) {
-                    showNextCandle();
-                    touchStartX = 0;
-                    touchStartY = 0;
-                }
-            }
-        });
-        
-        document.addEventListener('touchend', function(e) {
-            touchStartX = 0;
-            touchStartY = 0;
-        });
+        // Swipe functionality removed for better chart behavior
     }
     
     // --- USTAWIENIA GRY ---
@@ -582,40 +548,35 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             // Pobierz aktualny widoczny zakres
             const visibleRange = chart.timeScale().getVisibleRange();
             if (!visibleRange) {
-                // Jeśli nie ma zakresu, po prostu przewiń do końca
-                chart.timeScale().scrollToRealTime();
-                return;
+                return; // Nie rób nic jeśli nie ma zakresu
             }
             
-            // Oblicz szerokość aktualnego zakresu
-            const rangeWidth = visibleRange.to - visibleRange.from;
-            
-            // Pobierz najnowszą świecę
+            // Pobierz dane świec
             const candleData = candleSeries.data();
             if (!candleData || candleData.length === 0) return;
             
             const lastCandleTime = candleData[candleData.length - 1].time;
             
-            // Sprawdź czy najnowsza świeca jest widoczna
-            const isLastCandleVisible = lastCandleTime >= visibleRange.from && lastCandleTime <= visibleRange.to;
+            // Sprawdź czy użytkownik ogląda najnowsze dane (ostatnia świeca jest widoczna)
+            const isViewingLatest = lastCandleTime >= visibleRange.from && lastCandleTime <= visibleRange.to;
             
-            if (isLastCandleVisible) {
-                // Jeśli najnowsza świeca jest widoczna, przesuń zakres tak żeby zachować szerokość
-                // ale pokazać najnowsze dane
-                const newTo = lastCandleTime;
-                const newFrom = newTo - rangeWidth;
+            if (isViewingLatest) {
+                // Jeśli użytkownik ogląda najnowsze dane, przesuń wykres o jedną świecę w lewo
+                // tak jak w prawdziwym tradingu - nowa świeca pojawia się po prawej stronie
+                const rangeWidth = visibleRange.to - visibleRange.from;
+                const candleInterval = candleData.length > 1 ? 
+                    candleData[candleData.length - 1].time - candleData[candleData.length - 2].time : 
+                    900; // 15 minut jako fallback
                 
                 chart.timeScale().setVisibleRange({
-                    from: newFrom,
-                    to: newTo
+                    from: visibleRange.from + candleInterval,
+                    to: visibleRange.to + candleInterval
                 });
             }
-            // Jeśli najnowsza świeca nie jest widoczna, nie rób nic - użytkownik może przeglądać historię
+            // Jeśli użytkownik przegląda historię, nie rób nic - pozwól mu oglądać
             
         } catch (error) {
             console.log('Błąd przy przewijaniu wykresu:', error);
-            // Fallback
-            chart.timeScale().scrollToRealTime();
         }
     }
 
@@ -684,7 +645,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         if (document.body.classList.contains('mobile')) {
             const welcomeContent = document.querySelector('.welcome-content p');
             if (welcomeContent) {
-                welcomeContent.innerHTML = 'Przetestuj swoje umiejętności w tradingu kryptowalut bez ryzyka!<br><small style="color: #f7931a;">Tryb mobilny: Przesuń palcem w lewo aby przejść do następnej świecy</small>';
+                welcomeContent.innerHTML = 'Przetestuj swoje umiejętności w tradingu kryptowalut bez ryzyka!<br><small style="color: #f7931a;">Tryb mobilny: Użyj przycisku "Następna Świeca" aby przejść dalej</small>';
             }
         }
     }

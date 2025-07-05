@@ -1093,23 +1093,171 @@ body:not(.mobile) .mobile-only {
 }
 
 .mobile .header {
-    padding: 8px;
+    border: 2px solid var(--bybit-orange); /* Dodanie pomarańczowej ramki */
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.15);
 }
 
-/* Nowy layout mobilny */
+.mobile #logo-and-controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.mobile .header .header-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.mobile .header .header-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 80px;
+    flex: 1;
+    max-width: 120px;
+}
+
+/* Wyśrodkowanie przycisków w modalach */
+.mobile .welcome-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.mobile .welcome-buttons .btn {
+    width: 80%;
+    max-width: 300px;
+    padding: 14px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.mobile .modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.mobile .modal-buttons .btn {
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+}
+
+/* Zmniejszenie wysokości przycisków marży o 30% */
+.mobile .margin-mode-mobile .radio-group label {
+    height: 31px; /* Zmniejszone z ~44px o 30% */
+    min-height: 31px;
+    padding: 6px 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Połączenie karty salda z wykresem */
+.mobile .balance-info-chart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--bybit-orange);
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.mobile .balance-info-chart span {
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Style dla przycisków tradingowych pod wykresem */
+.mobile .trading-buttons-chart {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.mobile .trading-buttons-chart .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 13px;
+    min-height: 40px;
+    border-radius: 6px;
+}
+
+.mobile .next-candle-chart {
+    margin-top: 8px;
+    padding: 0;
+}
+
+.mobile .next-candle-chart .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    min-height: 40px;
+    border-radius: 6px;
+}
+
+/* Zmniejszenie marginesów między kartami */
+.mobile .main-content {
+    gap: 8px; /* Zmniejszone z domyślnego */
+}
+
+.mobile .game-settings-card,
+.mobile .chart-card,
+.mobile .trading-card,
+.mobile .position-card,
+.mobile .indicators-card {
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+/* Zwiększenie szerokości kart - zmniejszenie marginesów o 50% */
+.mobile body {
+    padding: 5px; /* Zmniejszone z 10px o 50% */
+}
+
+.mobile #game-container {
+    max-width: 97vw; /* Zwiększone z 95vw */
+    padding: 15px; /* Zmniejszone z 20px */
+}
+
+/* Nowy layout mobilny - header z przyciskami pod logo */
 .mobile .header {
     padding: 10px;
     background-color: var(--secondary-color);
     border-radius: 0 0 12px 12px;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .mobile #logo-and-controls {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
+    width: 100%;
 }
 
 .mobile .header .logo {
@@ -1122,16 +1270,18 @@ body:not(.mobile) .mobile-only {
 
 .mobile .header .header-buttons {
     display: flex;
-    gap: 6px;
-    flex: 1;
+    gap: 8px;
+    flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
 }
 
 .mobile .header .header-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 80px;
     flex: 1;
-    max-width: 80px;
-    font-size: 10px;
-    padding: 8px 4px;
+    max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1145,10 +1295,11 @@ body:not(.mobile) .mobile-only {
 /* Karta ustawień gry */
 .mobile .game-settings-card {
     background-color: var(--secondary-color);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 12px;
     margin: 0 10px 10px 10px;
-    border: 1px solid var(--bybit-yellow);
+    border: 2px solid var(--bybit-orange);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
 }
 
 .mobile .game-settings-card h3 {
@@ -1250,10 +1401,11 @@ body:not(.mobile) .mobile-only {
 /* Karta wykresu */
 .mobile .chart-card {
     background-color: var(--secondary-color);
-    border-radius: 12px;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 12px;
     margin: 0 10px 10px 10px;
-    border: 1px solid var(--bybit-yellow);
+    border: 2px solid var(--bybit-orange);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
 }
 
 .mobile .chart-section {
@@ -1265,17 +1417,19 @@ body:not(.mobile) .mobile-only {
 
 .mobile .chart-container {
     height: 100%;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
+    border: 1px solid var(--bybit-orange);
 }
 
 /* Karta tradingowa */
 .mobile .trading-card {
     background-color: var(--secondary-color);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 12px;
     margin: 0 10px 10px 10px;
-    border: 1px solid var(--bybit-yellow);
+    border: 2px solid var(--bybit-orange);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
 }
 
 .mobile .trading-card h3 {
@@ -1389,10 +1543,11 @@ body:not(.mobile) .mobile-only {
 /* Karta pozycji */
 .mobile .position-card {
     background-color: var(--secondary-color);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 12px;
     margin: 0 10px 10px 10px;
-    border: 1px solid var(--bybit-yellow);
+    border: 2px solid var(--bybit-orange);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
 }
 
 .mobile .position-card h3 {
@@ -1418,25 +1573,24 @@ body:not(.mobile) .mobile-only {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-top: 0;
+    font-size: 13px;
 }
 
 .mobile .position-details div {
-    padding: 8px;
+    padding: 6px 8px;
     background-color: var(--bg-color);
-    border-radius: 6px;
-    text-align: center;
-    font-size: 11px;
-    border: 1px solid #444;
+    border-radius: 4px;
+    border: 1px solid var(--bybit-orange);
 }
 
 /* Karta wskaźników */
 .mobile .indicators-card {
     background-color: var(--secondary-color);
-    border-radius: 12px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 12px;
     margin: 0 10px 10px 10px;
-    border: 1px solid var(--bybit-yellow);
+    border: 2px solid var(--bybit-orange);
+    box-shadow: 0 2px 8px rgba(255, 109, 0, 0.1);
 }
 
 .mobile .indicators-card h3 {
@@ -1456,15 +1610,16 @@ body:not(.mobile) .mobile-only {
 
 .mobile .indicators-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
+    padding: 0;
 }
 
 .mobile .indicators-buttons .btn {
-    padding: 8px 4px;
-    font-size: 11px;
-    border-radius: 6px;
     min-height: 36px;
+    padding: 6px 4px;
+    font-size: 11px;
+    border-radius: 4px;
 }
 
 /* Karta kontroli gry */
@@ -1767,5 +1922,41 @@ body:not(.mobile) .mobile-only {
     .leaderboard-table th,
     .leaderboard-table td {
         padding: 8px;
+    }
+}
+
+/* Dodatkowe poprawki mobilne */
+
+/* Poprawka dla responsywności sald w karcie wykresu - już zastosowane powyżej */
+
+/* Poprawka dla przycisków w kartach - już zastosowane powyżej */
+
+/* Poprawka dla przycisków tradingowych - już zastosowane powyżej */
+
+/* Poprawka dla wykresu - już zastosowane powyżej */
+
+/* Poprawka dla kart - lepsze odstępy - już zastosowane powyżej */
+
+/* Poprawka dla przycisków wskaźników i pozycji - już zastosowane powyżej */
+
+/* Poprawka dla responsywności na małych ekranach */
+@media (max-width: 480px) {
+    .mobile .balance-info-chart {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .mobile .balance-info-chart span {
+        font-size: 11px;
+    }
+    
+    .mobile .trading-buttons-chart {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .mobile .indicators-buttons {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

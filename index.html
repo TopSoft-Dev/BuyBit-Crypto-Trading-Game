@@ -81,18 +81,30 @@
                 </div>
             </div>
 
-            <!-- Karta salda (tylko mobilne) -->
-            <div class="balance-card mobile-only">
-                <div class="balance-info">
+
+
+            <!-- Karta wykresu (mobilne) -->
+            <div class="chart-card mobile-only">
+                <!-- Saldo i czas przeniesione do karty wykresu -->
+                <div class="balance-info-chart">
                     <span>Saldo: <span id="balance-mobile">$10000</span></span>
                     <span id="total-pl-mobile" class="neutral">($0.00)</span>
                     <span>Czas: <span id="time-left-mobile">--:--</span></span>
                 </div>
-            </div>
-
-            <!-- Karta wykresu (mobilne) -->
-            <div class="chart-card mobile-only">
+                
                 <div id="chart-container-mobile" class="chart-section chart-container" style="height: 45vh; min-height: 280px;"></div>
+                
+                <!-- Przyciski tradingowe przeniesione pod wykres -->
+                <div class="trading-buttons-chart">
+                    <button id="long-btn-mobile" class="btn long">Long</button>
+                    <button id="short-btn-mobile" class="btn short">Short</button>
+                    <button id="close-btn-mobile" class="btn" disabled>Zamknij Pozycję</button>
+                </div>
+                
+                <!-- Przycisk następnej świecy -->
+                <div class="next-candle-chart">
+                    <button id="next-candle-btn-mobile" class="btn">Następna Świeca</button>
+                </div>
             </div>
 
             <div class="chart-and-right-panel-wrapper">
@@ -164,13 +176,6 @@
                     </div>
                     <input type="range" id="leverage-mobile" min="1" max="100" value="1">
                 </div>
-                <div class="control-group actions trading-buttons">
-                    <button id="long-btn-mobile" class="btn long">Long</button>
-                    <button id="short-btn-mobile" class="btn short">Short</button>
-                </div>
-                <div class="control-group">
-                    <button id="close-btn-mobile" class="btn" disabled>Zamknij Pozycję</button>
-                </div>
             </div>
 
             <!-- Karta pozycji (tylko mobilne) -->
@@ -197,11 +202,7 @@
                 </div>
             </div>
 
-            <!-- Karta kontroli gry (tylko mobilne) -->
-            <div class="game-controls-card mobile-only">
-                <h3>Kontrola Gry</h3>
-                <button id="next-candle-btn-mobile" class="btn">Następna Świeca</button>
-            </div>
+
 
             <div id="indicator-controls" class="indicators-panel">
                 <div class="indicators-buttons">
