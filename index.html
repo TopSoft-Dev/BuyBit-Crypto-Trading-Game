@@ -85,20 +85,11 @@
 
             <!-- Karta wykresu (mobilne) -->
             <div class="chart-card mobile-only">
-                <!-- Trzy osobne karty w jednej linii -->
-                <div class="info-cards-row">
-                    <div class="info-card balance-card-mini">
-                        <div class="card-title">Saldo</div>
-                        <div class="card-value" id="balance-mobile">$10000</div>
-                    </div>
-                    <div class="info-card change-card-mini">
-                        <div class="card-title">Zmiana</div>
-                        <div class="card-value" id="total-pl-mobile">($0.00)</div>
-                    </div>
-                    <div class="info-card time-card-mini">
-                        <div class="card-title">Czas</div>
-                        <div class="card-value" id="time-left-mobile">--:--</div>
-                    </div>
+                <!-- Trzy pola identyczne jak w position-details -->
+                <div class="chart-info-details">
+                    <div>Saldo: <span id="balance-mobile">$10000</span></div>
+                    <div>Zmiana: <span id="total-pl-mobile" class="neutral">($0.00)</span></div>
+                    <div>Czas: <span id="time-left-mobile">--:--</span></div>
                 </div>
                 
                 <div id="chart-container-mobile" class="chart-section chart-container" style="height: 45vh; min-height: 280px;"></div>
