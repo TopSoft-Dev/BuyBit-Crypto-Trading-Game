@@ -1184,16 +1184,21 @@ body:not(.mobile) .mobile-only {
     justify-content: space-between;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 6px;
+    gap: 4px;
     width: 100%;
 }
 
-.mobile .balance-row span {
+.mobile .balance-item {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
+.mobile .balance-item span {
     white-space: nowrap;
     font-weight: bold;
-    font-size: 11px;
-    flex-shrink: 1;
-    min-width: 0;
+    font-size: 10px;
+    display: block;
 }
 
 .mobile .position-info-compact {
@@ -1205,11 +1210,20 @@ body:not(.mobile) .mobile-only {
     background-color: var(--bg-color);
     border-radius: 4px;
     border: 1px solid var(--bybit-orange);
+    gap: 4px;
 }
 
-.mobile .position-info-compact span {
+.mobile .position-item {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
+.mobile .position-item span {
     white-space: nowrap;
     font-weight: bold;
+    font-size: 10px;
+    display: block;
 }
 
 /* Style dla przycisków tradingowych pod wykresem */
@@ -1259,7 +1273,7 @@ body:not(.mobile) .mobile-only {
 
 /* Zmniejszenie marginesów między kartami */
 .mobile .main-content {
-    gap: 8px; /* Zmniejszone z domyślnego */
+    gap: 4px; /* Zmniejszone jeszcze bardziej */
 }
 
 .mobile .game-settings-card,
@@ -1267,18 +1281,18 @@ body:not(.mobile) .mobile-only {
 .mobile .trading-card,
 .mobile .position-card,
 .mobile .indicators-card {
-    padding: 12px;
-    margin-bottom: 8px;
+    padding: 10px;
+    margin: 0 6px 4px 6px; /* Zmniejszone marginesy boczne i dolne */
 }
 
 /* Zwiększenie szerokości kart - zmniejszenie marginesów o 50% */
 .mobile body {
-    padding: 5px; /* Zmniejszone z 10px o 50% */
+    padding: 2px; /* Zmniejszone jeszcze bardziej */
 }
 
 .mobile #game-container {
-    max-width: 97vw; /* Zwiększone z 95vw */
-    padding: 15px; /* Zmniejszone z 20px */
+    max-width: 99vw; /* Zwiększone jeszcze bardziej */
+    padding: 8px; /* Zmniejszone jeszcze bardziej */
 }
 
 /* Nowy layout mobilny - header z przyciskami pod logo */
@@ -1331,6 +1345,10 @@ body:not(.mobile) .mobile-only {
 
 .mobile .header #account-info {
     display: none; /* Ukrywamy na mobilnych - będzie w osobnej karcie */
+}
+
+.mobile #header-controls {
+    display: none !important; /* Ukrywamy wybór aktywów i interwałów - mamy to w karcie ustawień */
 }
 
 /* Karta ustawień gry */
@@ -1522,7 +1540,7 @@ body:not(.mobile) .mobile-only {
 .mobile .amount-controls {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 3px;
 }
 
 .mobile .amount-input-group {
@@ -1561,8 +1579,8 @@ body:not(.mobile) .mobile-only {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 2px;
 }
 
 .mobile .amount-label-input label {
@@ -1574,7 +1592,7 @@ body:not(.mobile) .mobile-only {
 .mobile .amount-label-input input[type="number"] {
     flex: 1;
     max-width: 100px;
-    padding: 6px;
+    padding: 4px;
     border-radius: 4px;
 }
 
@@ -2028,4 +2046,49 @@ body:not(.mobile) .mobile-only {
         align-items: flex-start;
         gap: 2px;
     }
+}
+
+/* Dodaj style dla aktywnych przycisków wskaźników mobilnych */
+.mobile .indicators-buttons .btn.active {
+    background-color: var(--bybit-yellow) !important;
+    color: #000 !important;
+    border-color: var(--bybit-yellow) !important;
+    font-weight: bold !important;
+}
+
+/* Style dla przycisku następnej świecy z cooldownem */
+.mobile .next-candle-chart .btn.cooldown {
+    background-color: #555 !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    position: relative;
+}
+
+.mobile .next-candle-chart .btn.cooldown::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, var(--bybit-yellow) 0%, transparent 100%);
+    border-radius: 4px;
+    opacity: 0.3;
+    animation: cooldown-progress 1s linear;
+}
+
+@keyframes cooldown-progress {
+    0% { 
+        width: 0%; 
+        opacity: 0.5;
+    }
+    100% { 
+        width: 100%; 
+        opacity: 0.1;
+    }
+}
+
+/* Ukryj elementy header-controls w wersji mobilnej */
+.mobile #header-controls {
+    display: none !important;
 }

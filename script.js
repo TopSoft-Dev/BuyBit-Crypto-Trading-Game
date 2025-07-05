@@ -273,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameState = {};
     let gameStarted = false; // Flaga czy gra została rozpoczęta
     let currentGameResult = null; // Przechowuje wynik końcowy gry do zapisania
+    let savedChartRange = null; // Zapamiętywanie pozycji wykresu w wersji mobilnej
     let rsiSeries; // Nowa seria dla RSI
 let macdHistogramSeries; // Nowa seria dla MACD Histogram
 let macdLineSeries; // Nowa seria dla MACD Line
@@ -539,21 +540,99 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     function autoFitChart() {
         if (!chart || !chart.timeScale) return;
         
-        // W wersji mobilnej, nie resetuj pozycji wykresu podczas gry
+        // W wersji mobilnej, dostosuj wykres aby najnowsze świece były widoczne
         if (document.body.classList.contains('mobile') && gameStarted) {
-            return; // Nie rób nic w wersji mobilnej po rozpoczęciu gry
+            try {
+                const candleData = candleSeries.data();
+                if (candleData && candleData.length > 0) {
+                    // Pokaż ostatnie 20 świec w wersji mobilnej
+                    const visibleCount = Math.min(20, candleData.length);
+                    const lastCandles = candleData.slice(-visibleCount);
+                    
+                    if (lastCandles.length > 0) {
+                        const fromTime = lastCandles[0].time;
+                        const toTime = lastCandles[lastCandles.length - 1].time;
+                        
+                        // Dodaj trochę przestrzeni po prawej stronie dla nowych świec
+                        const timeRange = toTime - fromTime;
+                        const padding = timeRange * 0.1; // 10% padding
+                        
+                        chart.timeScale().setVisibleRange({
+                            from: fromTime,
+                            to: toTime + padding
+                        });
+                        
+                        // Zaktualizuj zapisaną pozycję
+                        savedChartRange = {
+                            from: fromTime,
+                            to: toTime + padding,
+                            timestamp: Date.now()
+                        };
+                        
+                        console.log('Wykres dopasowany do najnowszych świec w wersji mobilnej');
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Błąd podczas dopasowywania wykresu mobilnego:', error);
+            }
         }
         
-        // Teraz gdy linia likwidacji jest w osobnym panelu, możemy użyć standardowego fitContent
+        // Standardowe dopasowanie dla wersji desktopowej
         setTimeout(() => {
             chart.timeScale().fitContent();
         }, 50);
+    }
+
+    function saveChartPosition() {
+        if (!chart || !chart.timeScale || !document.body.classList.contains('mobile')) return;
+        
+        try {
+            const visibleRange = chart.timeScale().getVisibleRange();
+            if (visibleRange) {
+                savedChartRange = {
+                    from: visibleRange.from,
+                    to: visibleRange.to,
+                    timestamp: Date.now()
+                };
+                console.log('Zapisano pozycję wykresu:', savedChartRange);
+            }
+        } catch (error) {
+            console.log('Błąd przy zapisywaniu pozycji wykresu:', error);
+        }
+    }
+
+    function restoreChartPosition() {
+        if (!chart || !chart.timeScale || !document.body.classList.contains('mobile') || !savedChartRange) return;
+        
+        try {
+            // Przywróć pozycję tylko jeśli została zapisana w ciągu ostatnich 30 sekund
+            const timeDiff = Date.now() - savedChartRange.timestamp;
+            if (timeDiff < 30000) { // 30 sekund
+                setTimeout(() => {
+                    if (chart && chart.timeScale) {
+                        chart.timeScale().setVisibleRange({
+                            from: savedChartRange.from,
+                            to: savedChartRange.to
+                        });
+                        console.log('Przywrócono pozycję wykresu:', savedChartRange);
+                    }
+                }, 100);
+            }
+        } catch (error) {
+            console.log('Błąd przy przywracaniu pozycji wykresu:', error);
+        }
     }
 
     function smartScrollToNewCandle() {
         if (!chart || !chart.timeScale) return;
         
         try {
+            // W wersji mobilnej, zapisz pozycję przed przewijaniem
+            if (document.body.classList.contains('mobile')) {
+                saveChartPosition();
+            }
+            
             // Pobierz aktualny widoczny zakres
             const visibleRange = chart.timeScale().getVisibleRange();
             if (!visibleRange) {
@@ -581,6 +660,15 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                     from: visibleRange.from + candleInterval,
                     to: visibleRange.to + candleInterval
                 });
+                
+                // W wersji mobilnej, zaktualizuj zapisaną pozycję
+                if (document.body.classList.contains('mobile')) {
+                    savedChartRange = {
+                        from: visibleRange.from + candleInterval,
+                        to: visibleRange.to + candleInterval,
+                        timestamp: Date.now()
+                    };
+                }
             }
             // Jeśli użytkownik przegląda historię, nie rób nic - pozwól mu oglądać
             
@@ -962,6 +1050,24 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         });
         
         resizeObserver.observe(activeChartContainer);
+
+        // W wersji mobilnej, dodaj Intersection Observer do wykrywania widoczności wykresu
+        if (document.body.classList.contains('mobile')) {
+            const intersectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                        // Wykres jest widoczny - przywróć pozycję po krótkim opóźnieniu
+                        setTimeout(() => {
+                            restoreChartPosition();
+                        }, 100);
+                    }
+                });
+            }, {
+                threshold: [0.5] // Wywołaj gdy wykres jest widoczny w 50%
+            });
+            
+            intersectionObserver.observe(activeChartContainer);
+        }
         
         // Dodaj obsługę touch eventów dla urządzeń mobilnych
         if (document.body.classList.contains('mobile')) {
@@ -991,6 +1097,21 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 }, 100);
             }
         });
+
+        // W wersji mobilnej, zapisuj pozycję wykresu przy scrollowaniu
+        if (document.body.classList.contains('mobile')) {
+            let scrollTimer = null;
+            window.addEventListener('scroll', () => {
+                // Zapisz pozycję wykresu przed scrollowaniem
+                saveChartPosition();
+                
+                // Debounce - przywróć pozycję po zakończeniu scrollowania
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => {
+                    restoreChartPosition();
+                }, 500);
+            }, { passive: true });
+        }
     }
 
     async function loadData() {
@@ -1052,8 +1173,14 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         candleSeries.setData(initialCandles);
         
         // Automatyczne dopasowanie zoom do widocznych świec tylko przy starcie
-        // W wersji mobilnej, ustaw zoom tylko przy pierwszym uruchomieniu
-        if (!document.body.classList.contains('mobile') || !gameStarted) {
+        // W wersji mobilnej, zawsze ustaw odpowiedni zoom aby najnowsze świece były widoczne
+        if (document.body.classList.contains('mobile')) {
+            // W wersji mobilnej, ustaw zoom na ostatnie świece
+            setTimeout(() => {
+                autoFitChart();
+            }, 100);
+        } else if (!gameStarted) {
+            // W wersji desktopowej, dopasuj tylko przy pierwszym uruchomieniu
             autoFitChart();
         }
         
@@ -1549,6 +1676,25 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     }
 
     function showNextCandle() {
+        // Sprawdź cooldown dla przycisku mobilnego
+        if (document.body.classList.contains('mobile')) {
+            const mobileCandleBtn = document.getElementById('next-candle-btn-mobile');
+            if (mobileCandleBtn && mobileCandleBtn.classList.contains('cooldown')) {
+                return; // Przycisk jest w cooldown
+            }
+            
+            // Aktywuj cooldown
+            if (mobileCandleBtn) {
+                mobileCandleBtn.classList.add('cooldown');
+                mobileCandleBtn.disabled = true;
+                
+                setTimeout(() => {
+                    mobileCandleBtn.classList.remove('cooldown');
+                    mobileCandleBtn.disabled = !gameState.isGameReady;
+                }, 1000); // 1 sekunda cooldown
+            }
+        }
+        
         if (gameState.currentDataIndex >= historicalData.length) {
             endGame("win");
             return;
@@ -1739,15 +1885,13 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         
         // W wersji mobilnej, zachowaj obecną pozycję wykresu jeśli gra już się rozpoczęła
         if (document.body.classList.contains('mobile') && gameStarted && chart) {
-            // Zachowaj obecny zakres wykresu
-            const currentRange = chart.timeScale().getVisibleRange();
+            // Zapisz obecny zakres wykresu
+            saveChartPosition();
             loadData();
             // Przywróć zakres po załadowaniu danych
             setTimeout(() => {
-                if (currentRange && chart) {
-                    chart.timeScale().setVisibleRange(currentRange);
-                }
-            }, 100);
+                restoreChartPosition();
+            }, 200);
         } else {
             loadData();
         }
@@ -2066,6 +2210,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     toggleRsiBtn.addEventListener('click', () => {
         gameState.showRSI = !gameState.showRSI;
         toggleRsiBtn.classList.toggle('active', gameState.showRSI);
+        if (toggleRsiMobileBtn) toggleRsiMobileBtn.classList.toggle('active', gameState.showRSI);
         updateIndicators();
         saveAllSettings();
     });
@@ -2073,6 +2218,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     toggleMacdBtn.addEventListener('click', () => {
         gameState.showMACD = !gameState.showMACD;
         toggleMacdBtn.classList.toggle('active', gameState.showMACD);
+        if (toggleMacdMobileBtn) toggleMacdMobileBtn.classList.toggle('active', gameState.showMACD);
         updateIndicators();
         saveAllSettings();
     });
@@ -2080,6 +2226,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     toggleBbBtn.addEventListener('click', () => {
         gameState.showBB = !gameState.showBB;
         toggleBbBtn.classList.toggle('active', gameState.showBB);
+        if (toggleBbMobileBtn) toggleBbMobileBtn.classList.toggle('active', gameState.showBB);
         updateIndicators();
         saveAllSettings();
     });
@@ -2087,6 +2234,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     toggleEmaBtn.addEventListener('click', () => {
         gameState.showEMA = !gameState.showEMA;
         toggleEmaBtn.classList.toggle('active', gameState.showEMA);
+        if (toggleEmaMobileBtn) toggleEmaMobileBtn.classList.toggle('active', gameState.showEMA);
         updateIndicators();
         saveAllSettings();
     });
@@ -2094,6 +2242,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     toggleTmaBtn.addEventListener('click', () => {
         gameState.showTMA = !gameState.showTMA;
         toggleTmaBtn.classList.toggle('active', gameState.showTMA);
+        if (toggleTmaMobileBtn) toggleTmaMobileBtn.classList.toggle('active', gameState.showTMA);
         updateIndicators();
         saveAllSettings();
     });
