@@ -540,36 +540,44 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     function autoFitChart() {
         if (!chart || !chart.timeScale) return;
         
-        // W wersji mobilnej, dostosuj wykres aby najnowsze świece były widoczne
+        // W wersji mobilnej, ustaw stały widok z marginesem
         if (document.body.classList.contains('mobile') && gameStarted) {
             try {
                 const candleData = candleSeries.data();
                 if (candleData && candleData.length > 0) {
-                    // Pokaż ostatnie 20 świec w wersji mobilnej
-                    const visibleCount = Math.min(20, candleData.length);
-                    const lastCandles = candleData.slice(-visibleCount);
+                    // Pokaż ostatnie 15 świec z dużym marginesem po lewej stronie
+                    const visibleCount = Math.min(15, candleData.length);
+                    const startIndex = Math.max(0, candleData.length - visibleCount);
+                    const visibleCandles = candleData.slice(startIndex);
                     
-                    if (lastCandles.length > 0) {
-                        const fromTime = lastCandles[0].time;
-                        const toTime = lastCandles[lastCandles.length - 1].time;
+                    if (visibleCandles.length > 0) {
+                        const firstTime = visibleCandles[0].time;
+                        const lastTime = visibleCandles[visibleCandles.length - 1].time;
                         
-                        // Dodaj trochę przestrzeni po prawej stronie dla nowych świec
-                        const timeRange = toTime - fromTime;
-                        const padding = timeRange * 0.1; // 10% padding
+                        // Oblicz interwał między świecami
+                        const candleInterval = visibleCandles.length > 1 ? 
+                            visibleCandles[1].time - visibleCandles[0].time : 900; // 15 min fallback
+                        
+                        // Dodaj duży margines po lewej (5 świec) i mały po prawej (2 świece)
+                        const leftMargin = candleInterval * 5;
+                        const rightMargin = candleInterval * 2;
+                        
+                        const fromTime = firstTime - leftMargin;
+                        const toTime = lastTime + rightMargin;
                         
                         chart.timeScale().setVisibleRange({
                             from: fromTime,
-                            to: toTime + padding
+                            to: toTime
                         });
                         
                         // Zaktualizuj zapisaną pozycję
                         savedChartRange = {
                             from: fromTime,
-                            to: toTime + padding,
+                            to: toTime,
                             timestamp: Date.now()
                         };
                         
-                        console.log('Wykres dopasowany do najnowszych świec w wersji mobilnej');
+                        console.log('Wykres ustawiony z marginesem w wersji mobilnej');
                         return;
                     }
                 }
@@ -585,6 +593,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     }
 
     function saveChartPosition() {
+        // Uproszczona funkcja - nie używana już w nowej logice
         if (!chart || !chart.timeScale || !document.body.classList.contains('mobile')) return;
         
         try {
@@ -595,83 +604,86 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                     to: visibleRange.to,
                     timestamp: Date.now()
                 };
-                console.log('Zapisano pozycję wykresu:', savedChartRange);
             }
         } catch (error) {
-            console.log('Błąd przy zapisywaniu pozycji wykresu:', error);
+            // Ignoruj błędy
         }
     }
 
     function restoreChartPosition() {
-        if (!chart || !chart.timeScale || !document.body.classList.contains('mobile') || !savedChartRange) return;
-        
-        try {
-            // Przywróć pozycję tylko jeśli została zapisana w ciągu ostatnich 30 sekund
-            const timeDiff = Date.now() - savedChartRange.timestamp;
-            if (timeDiff < 30000) { // 30 sekund
-                setTimeout(() => {
-                    if (chart && chart.timeScale) {
-                        chart.timeScale().setVisibleRange({
-                            from: savedChartRange.from,
-                            to: savedChartRange.to
-                        });
-                        console.log('Przywrócono pozycję wykresu:', savedChartRange);
-                    }
-                }, 100);
-            }
-        } catch (error) {
-            console.log('Błąd przy przywracaniu pozycji wykresu:', error);
-        }
+        // Uproszczona funkcja - nie używana już w nowej logice
+        // Wykres ma teraz stały margines ustawiany przez autoFitChart
     }
 
     function smartScrollToNewCandle() {
         if (!chart || !chart.timeScale) return;
         
+        // W wersji mobilnej, po prostu ustaw wykres z marginesem
+        if (document.body.classList.contains('mobile')) {
+            try {
+                const candleData = candleSeries.data();
+                if (candleData && candleData.length > 0) {
+                    // Pokaż ostatnie 15 świec z dużym marginesem po lewej
+                    const visibleCount = Math.min(15, candleData.length);
+                    const startIndex = Math.max(0, candleData.length - visibleCount);
+                    const visibleCandles = candleData.slice(startIndex);
+                    
+                    if (visibleCandles.length > 0) {
+                        const firstTime = visibleCandles[0].time;
+                        const lastTime = visibleCandles[visibleCandles.length - 1].time;
+                        
+                        // Oblicz interwał między świecami
+                        const candleInterval = visibleCandles.length > 1 ? 
+                            visibleCandles[1].time - visibleCandles[0].time : 900;
+                        
+                        // Duży margines po lewej (5 świec) i mały po prawej (2 świece)
+                        const leftMargin = candleInterval * 5;
+                        const rightMargin = candleInterval * 2;
+                        
+                        const fromTime = firstTime - leftMargin;
+                        const toTime = lastTime + rightMargin;
+                        
+                        chart.timeScale().setVisibleRange({
+                            from: fromTime,
+                            to: toTime
+                        });
+                        
+                        // Zaktualizuj zapisaną pozycję
+                        savedChartRange = {
+                            from: fromTime,
+                            to: toTime,
+                            timestamp: Date.now()
+                        };
+                        
+                        console.log('Wykres przesunięty do nowej świecy z marginesem');
+                    }
+                }
+            } catch (error) {
+                console.error('Błąd podczas przesuwania wykresu mobilnego:', error);
+            }
+            return;
+        }
+        
+        // Standardowa logika dla wersji desktopowej
         try {
-            // W wersji mobilnej, zapisz pozycję przed przewijaniem
-            if (document.body.classList.contains('mobile')) {
-                saveChartPosition();
-            }
-            
-            // Pobierz aktualny widoczny zakres
             const visibleRange = chart.timeScale().getVisibleRange();
-            if (!visibleRange) {
-                return; // Nie rób nic jeśli nie ma zakresu
-            }
+            if (!visibleRange) return;
             
-            // Pobierz dane świec
             const candleData = candleSeries.data();
             if (!candleData || candleData.length === 0) return;
             
             const lastCandleTime = candleData[candleData.length - 1].time;
-            
-            // Sprawdź czy użytkownik ogląda najnowsze dane (ostatnia świeca jest widoczna)
             const isViewingLatest = lastCandleTime >= visibleRange.from && lastCandleTime <= visibleRange.to;
             
             if (isViewingLatest) {
-                // Jeśli użytkownik ogląda najnowsze dane, przesuń wykres o jedną świecę w lewo
-                // tak jak w prawdziwym tradingu - nowa świeca pojawia się po prawej stronie
-                const rangeWidth = visibleRange.to - visibleRange.from;
                 const candleInterval = candleData.length > 1 ? 
-                    candleData[candleData.length - 1].time - candleData[candleData.length - 2].time : 
-                    900; // 15 minut jako fallback
+                    candleData[candleData.length - 1].time - candleData[candleData.length - 2].time : 900;
                 
                 chart.timeScale().setVisibleRange({
                     from: visibleRange.from + candleInterval,
                     to: visibleRange.to + candleInterval
                 });
-                
-                // W wersji mobilnej, zaktualizuj zapisaną pozycję
-                if (document.body.classList.contains('mobile')) {
-                    savedChartRange = {
-                        from: visibleRange.from + candleInterval,
-                        to: visibleRange.to + candleInterval,
-                        timestamp: Date.now()
-                    };
-                }
             }
-            // Jeśli użytkownik przegląda historię, nie rób nic - pozwól mu oglądać
-            
         } catch (error) {
             console.log('Błąd przy przewijaniu wykresu:', error);
         }
@@ -1051,33 +1063,11 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         
         resizeObserver.observe(activeChartContainer);
 
-        // W wersji mobilnej, dodaj Intersection Observer do wykrywania widoczności wykresu
-        if (document.body.classList.contains('mobile')) {
-            const intersectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-                        // Wykres jest widoczny - przywróć pozycję po krótkim opóźnieniu
-                        setTimeout(() => {
-                            restoreChartPosition();
-                        }, 100);
-                    }
-                });
-            }, {
-                threshold: [0.5] // Wywołaj gdy wykres jest widoczny w 50%
-            });
-            
-            intersectionObserver.observe(activeChartContainer);
-        }
-        
-        // Dodaj obsługę touch eventów dla urządzeń mobilnych
+        // Prosta obsługa touch eventów dla urządzeń mobilnych
         if (document.body.classList.contains('mobile')) {
             activeChartContainer.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-            }, { passive: false });
-            
-            activeChartContainer.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-            }, { passive: false });
+                // Pozwól na normalne działanie wykresu
+            }, { passive: true });
         }
         
         // Dodaj event listener dla window resize
@@ -1098,20 +1088,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             }
         });
 
-        // W wersji mobilnej, zapisuj pozycję wykresu przy scrollowaniu
-        if (document.body.classList.contains('mobile')) {
-            let scrollTimer = null;
-            window.addEventListener('scroll', () => {
-                // Zapisz pozycję wykresu przed scrollowaniem
-                saveChartPosition();
-                
-                // Debounce - przywróć pozycję po zakończeniu scrollowania
-                clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(() => {
-                    restoreChartPosition();
-                }, 500);
-            }, { passive: true });
-        }
+        // Usunięto nadmierną logikę scroll - wykres ma teraz stały margines
     }
 
     async function loadData() {
@@ -1691,7 +1668,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 setTimeout(() => {
                     mobileCandleBtn.classList.remove('cooldown');
                     mobileCandleBtn.disabled = !gameState.isGameReady;
-                }, 1000); // 1 sekunda cooldown
+                }, 200); // 0.2 sekundy cooldown
             }
         }
         

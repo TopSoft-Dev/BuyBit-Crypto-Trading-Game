@@ -2056,6 +2056,14 @@ body:not(.mobile) .mobile-only {
     font-weight: bold !important;
 }
 
+/* Upewnij się, że nieaktywne przyciski wskaźników mają domyślny wygląd */
+.mobile .indicators-buttons .btn:not(.active) {
+    background-color: var(--blue-color) !important;
+    color: #fff !important;
+    border-color: var(--blue-color) !important;
+    font-weight: normal !important;
+}
+
 /* Style dla przycisku następnej świecy z cooldownem */
 .mobile .next-candle-chart .btn.cooldown {
     background-color: #555 !important;
@@ -2074,7 +2082,7 @@ body:not(.mobile) .mobile-only {
     background: linear-gradient(90deg, var(--bybit-yellow) 0%, transparent 100%);
     border-radius: 4px;
     opacity: 0.3;
-    animation: cooldown-progress 1s linear;
+    animation: cooldown-progress 0.2s linear;
 }
 
 @keyframes cooldown-progress {
