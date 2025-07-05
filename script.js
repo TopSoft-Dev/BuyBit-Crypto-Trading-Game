@@ -212,7 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const posLiquidationPriceMobileEl = document.getElementById('pos-liquidation-price-mobile');
     const posPlMobileEl = document.getElementById('pos-pl-mobile');
     
-    // Kompaktowe elementy pozycji w karcie wykresu
+    // Elementy pozycji w karcie wykresu
+    const posDirectionChartEl = document.getElementById('pos-direction-chart');
+    const posPlChartEl = document.getElementById('pos-pl-chart');
     
     const marginModeMobileInputs = document.querySelectorAll('input[name="margin-mode-mobile"]');
     const notificationPopup = document.getElementById('notification-popup');
@@ -1432,7 +1434,15 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 posPlMobileEl.className = pnlClass;
             }
             
-            // Kompaktowe elementy w karcie wykresu
+            // Elementy w karcie wykresu
+            if (posDirectionChartEl) {
+                posDirectionChartEl.textContent = direction;
+                posDirectionChartEl.className = directionClass;
+            }
+            if (posPlChartEl) {
+                posPlChartEl.textContent = pnlText;
+                posPlChartEl.className = pnlClass;
+            }
             
         } else {
             // Desktop
@@ -1461,7 +1471,15 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 posPlMobileEl.className = 'neutral';
             }
             
-            // Kompaktowe elementy w karcie wykresu
+            // Elementy w karcie wykresu
+            if (posDirectionChartEl) {
+                posDirectionChartEl.textContent = '--';
+                posDirectionChartEl.className = 'neutral';
+            }
+            if (posPlChartEl) {
+                posPlChartEl.textContent = '$0.00';
+                posPlChartEl.className = 'neutral';
+            }
             
         }
     }

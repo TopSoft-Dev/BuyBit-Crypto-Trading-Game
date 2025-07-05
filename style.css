@@ -1182,6 +1182,31 @@ body:not(.mobile) .mobile-only {
     border: 1px solid var(--bybit-orange);
 }
 
+/* Informacje o pozycji pod kartami */
+.mobile .chart-position-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.mobile .chart-position-details div {
+    padding: 6px 8px;
+    background-color: var(--bg-color);
+    border-radius: 4px;
+    border: 1px solid var(--bybit-orange);
+}
+
+/* Poprawka wykresu mobilnego */
+.mobile .chart-section {
+    height: 40vh;
+    min-height: 250px;
+    max-height: 400px;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
 
 
 /* Style dla przycisków tradingowych pod wykresem */
@@ -1426,11 +1451,9 @@ body:not(.mobile) .mobile-only {
     overflow: visible; /* Pozwól na widoczność price scale */
 }
 
-.mobile .chart-section {
+.mobile .chart-card .chart-section {
     order: 1;
     width: 100%;
-    height: 45vh;
-    min-height: 280px;
 }
 
 .mobile .chart-container {
@@ -1996,6 +2019,15 @@ body:not(.mobile) .mobile-only {
     }
     
     .mobile .chart-info-details div {
+        padding: 4px 6px;
+    }
+    
+    .mobile .chart-position-details {
+        gap: 4px;
+        font-size: 11px;
+    }
+    
+    .mobile .chart-position-details div {
         padding: 4px 6px;
     }
     
