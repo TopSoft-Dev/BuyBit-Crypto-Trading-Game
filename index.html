@@ -47,6 +47,54 @@
         </div>
 
         <div id="main-content" class="main-content">
+            <!-- Karta ustawień gry (tylko mobilne) -->
+            <div class="game-settings-card mobile-only">
+                <h3>Ustawienia Gry</h3>
+                <div class="settings-row">
+                    <div class="setting-item">
+                        <label for="asset-mobile">Aktywo:</label>
+                        <select id="asset-mobile">
+                            <option value="BTC">BTC/USD</option>
+                            <option value="ETH">ETH/USD</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="interval-mobile">Interwał:</label>
+                        <select id="interval-mobile">
+                            <option value="5m">M5</option>
+                            <option value="15m" selected>M15</option>
+                            <option value="1h">H1</option>
+                            <option value="4h">H4</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div class="setting-item margin-mode-mobile">
+                        <label>Tryb Marży:</label>
+                        <div class="radio-group">
+                            <input type="radio" id="iso-mode-mobile" name="margin-mode-mobile" value="isolated" checked>
+                            <label for="iso-mode-mobile">Isolated</label>
+                            <input type="radio" id="cross-mode-mobile" name="margin-mode-mobile" value="cross">
+                            <label for="cross-mode-mobile">Cross</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Karta salda (tylko mobilne) -->
+            <div class="balance-card mobile-only">
+                <div class="balance-info">
+                    <span>Saldo: <span id="balance-mobile">$10000</span></span>
+                    <span id="total-pl-mobile" class="neutral">($0.00)</span>
+                    <span>Czas: <span id="time-left-mobile">--:--</span></span>
+                </div>
+            </div>
+
+            <!-- Karta wykresu (mobilne) -->
+            <div class="chart-card mobile-only">
+                <div id="chart-container-mobile" class="chart-section chart-container" style="height: 45vh; min-height: 280px;"></div>
+            </div>
+
             <div class="chart-and-right-panel-wrapper">
                 <div id="chart-container" class="chart-section chart-container"></div>
                 <div id="right-panel" class="trading-panel">
@@ -98,6 +146,63 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Karta tradingowa (tylko mobilne) -->
+            <div class="trading-card mobile-only">
+                <h3>Trading</h3>
+                <div class="control-group amount-controls">
+                    <label for="amount-mobile">Kwota (USD):</label>
+                    <div class="amount-input-group">
+                        <input type="range" id="amount-slider-mobile" min="1" max="10000" value="100">
+                        <input type="number" id="amount-mobile" value="100" min="1">
+                    </div>
+                </div>
+                <div class="control-group leverage-control">
+                    <div class="label-container">
+                        <label for="leverage-mobile">Dźwignia:</label>
+                        <span id="leverage-value-mobile">1x</span>
+                    </div>
+                    <input type="range" id="leverage-mobile" min="1" max="100" value="1">
+                </div>
+                <div class="control-group actions trading-buttons">
+                    <button id="long-btn-mobile" class="btn long">Long</button>
+                    <button id="short-btn-mobile" class="btn short">Short</button>
+                </div>
+                <div class="control-group">
+                    <button id="close-btn-mobile" class="btn" disabled>Zamknij Pozycję</button>
+                </div>
+            </div>
+
+            <!-- Karta pozycji (tylko mobilne) -->
+            <div class="position-card mobile-only">
+                <h3>Otwarta Pozycja</h3>
+                <div class="position-details">
+                    <div>Kierunek: <span id="pos-direction-mobile">--</span></div>
+                    <div>Wielkość: <span id="pos-size-mobile">--</span></div>
+                    <div>Cena Wejścia: <span id="pos-entry-price-mobile">--</span></div>
+                    <div>Likwidacja: <span id="pos-liquidation-price-mobile">--</span></div>
+                    <div style="grid-column: 1 / -1;">P/L: <span id="pos-pl-mobile" class="neutral">$0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Karta wskaźników (tylko mobilne) -->
+            <div class="indicators-card mobile-only">
+                <h3>Wskaźniki Techniczne</h3>
+                <div class="indicators-buttons">
+                    <button id="toggle-rsi-btn-mobile" class="btn">RSI</button>
+                    <button id="toggle-macd-btn-mobile" class="btn">MACD</button>
+                    <button id="toggle-bb-btn-mobile" class="btn">Bollinger</button>
+                    <button id="toggle-ema-btn-mobile" class="btn">EMA</button>
+                    <button id="toggle-tma-btn-mobile" class="btn">TMA</button>
+                </div>
+            </div>
+
+            <!-- Karta kontroli gry (tylko mobilne) -->
+            <div class="game-controls-card mobile-only">
+                <h3>Kontrola Gry</h3>
+                <button id="next-candle-btn-mobile" class="btn">Następna Świeca</button>
+            </div>
+
             <div id="indicator-controls" class="indicators-panel">
                 <div class="indicators-buttons">
                     <button id="toggle-rsi-btn" class="btn">RSI</button>

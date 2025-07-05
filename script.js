@@ -143,22 +143,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (parsedSettings.showRSI !== undefined) {
                     gameState.showRSI = parsedSettings.showRSI;
                     if (toggleRsiBtn) toggleRsiBtn.classList.toggle('active', gameState.showRSI);
+                    if (toggleRsiMobileBtn) toggleRsiMobileBtn.classList.toggle('active', gameState.showRSI);
                 }
                 if (parsedSettings.showMACD !== undefined) {
                     gameState.showMACD = parsedSettings.showMACD;
                     if (toggleMacdBtn) toggleMacdBtn.classList.toggle('active', gameState.showMACD);
+                    if (toggleMacdMobileBtn) toggleMacdMobileBtn.classList.toggle('active', gameState.showMACD);
                 }
                 if (parsedSettings.showBB !== undefined) {
                     gameState.showBB = parsedSettings.showBB;
                     if (toggleBbBtn) toggleBbBtn.classList.toggle('active', gameState.showBB);
+                    if (toggleBbMobileBtn) toggleBbMobileBtn.classList.toggle('active', gameState.showBB);
                 }
                 if (parsedSettings.showEMA !== undefined) {
                     gameState.showEMA = parsedSettings.showEMA;
                     if (toggleEmaBtn) toggleEmaBtn.classList.toggle('active', gameState.showEMA);
+                    if (toggleEmaMobileBtn) toggleEmaMobileBtn.classList.toggle('active', gameState.showEMA);
                 }
                 if (parsedSettings.showTMA !== undefined) {
                     gameState.showTMA = parsedSettings.showTMA;
                     if (toggleTmaBtn) toggleTmaBtn.classList.toggle('active', gameState.showTMA);
+                    if (toggleTmaMobileBtn) toggleTmaMobileBtn.classList.toggle('active', gameState.showTMA);
                 }
                 
                 // Załaduj ustawienie prowizji
@@ -203,6 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeLeftEl = document.getElementById('time-left');
     const assetSelect = document.getElementById('asset');
     const intervalSelect = document.getElementById('interval');
+    
+    // Elementy mobilne
+    const balanceMobileEl = document.getElementById('balance-mobile');
+    const totalPlMobileEl = document.getElementById('total-pl-mobile');
+    const timeLeftMobileEl = document.getElementById('time-left-mobile');
+    const assetMobileSelect = document.getElementById('asset-mobile');
+    const intervalMobileSelect = document.getElementById('interval-mobile');
     const chartContainer = document.getElementById('chart-container');
     const amountInput = document.getElementById('amount');
     const amountSlider = document.getElementById('amount-slider');
@@ -218,12 +230,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const posLiquidationPriceEl = document.getElementById('pos-liquidation-price');
     const posPlEl = document.getElementById('pos-pl');
     const marginModeInputs = document.querySelectorAll('input[name="margin-mode"]');
+    
+    // Elementy mobilne - kontrole
+    const amountMobileInput = document.getElementById('amount-mobile');
+    const amountMobileSlider = document.getElementById('amount-slider-mobile');
+    const leverageMobileInput = document.getElementById('leverage-mobile');
+    const leverageMobileValueEl = document.getElementById('leverage-value-mobile');
+    const longMobileBtn = document.getElementById('long-btn-mobile');
+    const shortMobileBtn = document.getElementById('short-btn-mobile');
+    const closeMobileBtn = document.getElementById('close-btn-mobile');
+    const nextCandleMobileBtn = document.getElementById('next-candle-btn-mobile');
+    const posDirectionMobileEl = document.getElementById('pos-direction-mobile');
+    const posSizeMobileEl = document.getElementById('pos-size-mobile');
+    const posEntryPriceMobileEl = document.getElementById('pos-entry-price-mobile');
+    const posLiquidationPriceMobileEl = document.getElementById('pos-liquidation-price-mobile');
+    const posPlMobileEl = document.getElementById('pos-pl-mobile');
+    const marginModeMobileInputs = document.querySelectorAll('input[name="margin-mode-mobile"]');
     const notificationPopup = document.getElementById('notification-popup');
     const toggleRsiBtn = document.getElementById('toggle-rsi-btn');
     const toggleMacdBtn = document.getElementById('toggle-macd-btn');
     const toggleBbBtn = document.getElementById('toggle-bb-btn');
     const toggleEmaBtn = document.getElementById('toggle-ema-btn');
     const toggleTmaBtn = document.getElementById('toggle-tma-btn');
+    
+    // Przyciski wskaźników mobilne
+    const toggleRsiMobileBtn = document.getElementById('toggle-rsi-btn-mobile');
+    const toggleMacdMobileBtn = document.getElementById('toggle-macd-btn-mobile');
+    const toggleBbMobileBtn = document.getElementById('toggle-bb-btn-mobile');
+    const toggleEmaMobileBtn = document.getElementById('toggle-ema-btn-mobile');
+    const toggleTmaMobileBtn = document.getElementById('toggle-tma-btn-mobile');
     const endGameModal = document.getElementById('end-game-modal');
     const endGameMessage = document.getElementById('end-game-message');
     const endGameOkBtn = document.getElementById('end-game-ok-btn');
@@ -735,11 +770,16 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     }
 
     function setupChart() {
+        // Wybierz odpowiedni kontener wykresu
+        const activeChartContainer = document.body.classList.contains('mobile') ? 
+            document.getElementById('chart-container-mobile') : 
+            document.getElementById('chart-container');
+        
         if (chart) {
             chart.remove();
             chart = null;
         }
-        chartContainer.innerHTML = '';
+        activeChartContainer.innerHTML = '';
 
         // Dostosuj wysokość dla urządzeń mobilnych
         function adjustChartHeight() {
@@ -750,7 +790,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
                 const availableHeight = screenHeight - headerHeight - controlsHeight - 150; // 150px margines na inne elementy
                 
                 const mobileHeight = Math.max(300, Math.min(availableHeight * 0.5, 400));
-                chartContainer.style.height = mobileHeight + 'px';
+                activeChartContainer.style.height = mobileHeight + 'px';
                 console.log('Mobile chart height adjusted to:', mobileHeight);
             }
         }
@@ -758,13 +798,13 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         adjustChartHeight();
 
         // Upewnij się, że kontener ma prawidłowe wymiary
-        const containerRect = chartContainer.getBoundingClientRect();
+        const containerRect = activeChartContainer.getBoundingClientRect();
         const width = Math.max(containerRect.width, 400);
         const height = Math.max(containerRect.height, 300);
         
         console.log('Chart container dimensions:', width, 'x', height);
-
-        chart = LightweightCharts.createChart(chartContainer, {
+        
+        chart = LightweightCharts.createChart(activeChartContainer, {
             width: width,
             height: height,
             layout: { backgroundColor: '#131722', textColor: '#d1d4dc' },
@@ -926,8 +966,8 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         let lastHeight = 0;
         
         const resizeObserver = new ResizeObserver(entries => {
-            if (chart && chartContainer) {
-                const containerRect = chartContainer.getBoundingClientRect();
+            if (chart && activeChartContainer) {
+                const containerRect = activeChartContainer.getBoundingClientRect();
                 const width = Math.max(containerRect.width, 400);
                 const height = Math.max(containerRect.height, 300);
                 
@@ -943,25 +983,25 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             }
         });
         
-        resizeObserver.observe(chartContainer);
+        resizeObserver.observe(activeChartContainer);
         
         // Dodaj obsługę touch eventów dla urządzeń mobilnych
         if (document.body.classList.contains('mobile')) {
-            chartContainer.addEventListener('touchstart', function(e) {
+            activeChartContainer.addEventListener('touchstart', function(e) {
                 e.preventDefault();
             }, { passive: false });
             
-            chartContainer.addEventListener('touchmove', function(e) {
+            activeChartContainer.addEventListener('touchmove', function(e) {
                 e.preventDefault();
             }, { passive: false });
         }
         
         // Dodaj event listener dla window resize
         window.addEventListener('resize', () => {
-            if (chart && chartContainer) {
+            if (chart && activeChartContainer) {
                 adjustChartHeight(); // Dostosuj wysokość przy resize
                 setTimeout(() => {
-                    const containerRect = chartContainer.getBoundingClientRect();
+                    const containerRect = activeChartContainer.getBoundingClientRect();
                     const width = Math.max(containerRect.width, 400);
                     const height = Math.max(containerRect.height, 300);
                     chart.applyOptions({
@@ -1051,6 +1091,11 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         balanceEl.textContent = `${formatNumber(gameState.balance)}`;
         timeLeftEl.textContent = `${gameState.gameDuration - gameState.candlesPassed} świec`;
         leverageValueEl.textContent = `${leverageInput.value}x`;
+        
+        // Synchronizuj z elementami mobilnymi
+        if (balanceMobileEl) balanceMobileEl.textContent = `${formatNumber(gameState.balance)}`;
+        if (timeLeftMobileEl) timeLeftMobileEl.textContent = `${gameState.gameDuration - gameState.candlesPassed} świec`;
+        if (leverageMobileValueEl) leverageMobileValueEl.textContent = `${leverageInput.value}x`;
 
         const totalPl = gameState.balance - STARTING_BALANCE;
         const totalPlPercent = (totalPl / STARTING_BALANCE) * 100;
@@ -1058,9 +1103,15 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         totalPlUsdEl.textContent = `(${formatNumber(totalPl)})`;
         totalPlPercentEl.textContent = `(${totalPlPercent >= 0 ? '+' : ''}${totalPlPercent.toFixed(2)}%)`;
         
+        // Synchronizuj P/L z mobilnymi
+        if (totalPlMobileEl) {
+            totalPlMobileEl.textContent = `(${totalPlPercent >= 0 ? '+' : ''}${totalPlPercent.toFixed(2)}%)`;
+        }
+        
         const pnlClass = totalPl > 0 ? 'positive' : totalPl < 0 ? 'negative' : 'neutral';
         totalPlUsdEl.className = pnlClass;
         totalPlPercentEl.className = pnlClass;
+        if (totalPlMobileEl) totalPlMobileEl.className = pnlClass;
 
         const hasPositions = hasActivePositions();
         nextCandleBtn.disabled = !gameState.isGameReady;
@@ -1077,27 +1128,44 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         [amountInput, amountSlider, leverageInput, assetSelect].forEach(el => el.disabled = hasPositions);
         marginModeInputs.forEach(input => input.disabled = hasPositions);
         
+        // Synchronizuj z kontrolami mobilnymi
+        if (amountMobileInput) amountMobileInput.disabled = hasPositions;
+        if (amountMobileSlider) amountMobileSlider.disabled = hasPositions;
+        if (leverageMobileInput) leverageMobileInput.disabled = hasPositions;
+        if (assetMobileSelect) assetMobileSelect.disabled = hasPositions;
+        if (marginModeMobileInputs) marginModeMobileInputs.forEach(input => input.disabled = hasPositions);
+        
         // Logika dla przycisków long/short
         if (hasPositions) {
             // Jeśli mamy pozycje, wyłącz przycisk przeciwnego kierunku
             longBtn.disabled = gameState.activeDirection === 'short';
             shortBtn.disabled = gameState.activeDirection === 'long';
+            if (longMobileBtn) longMobileBtn.disabled = gameState.activeDirection === 'short';
+            if (shortMobileBtn) shortMobileBtn.disabled = gameState.activeDirection === 'long';
         } else {
             // Jeśli nie mamy pozycji, włącz oba przyciski
             longBtn.disabled = false;
             shortBtn.disabled = false;
+            if (longMobileBtn) longMobileBtn.disabled = false;
+            if (shortMobileBtn) shortMobileBtn.disabled = false;
         }
 
         // Aktualizuj maksymalną wartość suwaka i pola kwoty
         if (!hasPositions) {
             amountInput.max = gameState.balance;
             amountSlider.max = gameState.balance;
+            if (amountMobileInput) amountMobileInput.max = gameState.balance;
+            if (amountMobileSlider) amountMobileSlider.max = gameState.balance;
+            
             // Skoryguj wartość suwaka, jeśli jest większa niż dostępne saldo
             if (parseFloat(amountInput.value) > gameState.balance) {
                 amountInput.value = gameState.balance;
                 amountSlider.value = gameState.balance;
+                if (amountMobileInput) amountMobileInput.value = gameState.balance;
+                if (amountMobileSlider) amountMobileSlider.value = gameState.balance;
             }
             updateSliderFill(amountSlider); // Zaktualizuj wypełnienie po ewentualnej korekcie
+            if (amountMobileSlider) updateSliderFill(amountMobileSlider);
         }
     }
 
@@ -1224,16 +1292,41 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             const liquidationPrice = calculateLiquidationPrice();
             
             // Koloruj kierunek pozycji
-            posDirectionEl.textContent = gameState.activeDirection.toUpperCase();
-            posDirectionEl.className = gameState.activeDirection === 'long' ? 'positive' : 'negative';
+            const direction = gameState.activeDirection.toUpperCase();
+            const directionClass = gameState.activeDirection === 'long' ? 'positive' : 'negative';
+            const sizeText = `${formatNumber(totalSize * totalLeverage)} (${formatNumber(totalSize)}x${totalLeverage.toFixed(1)})`;
+            const entryPriceText = `${formatNumber(avgEntryPrice)}`;
+            const liquidationPriceText = `${formatNumber(liquidationPrice)}`;
+            const pnlText = `${formatNumber(pnl)}`;
+            const pnlClass = pnl >= 0 ? 'positive' : 'negative';
             
-            posSizeEl.textContent = `${formatNumber(totalSize * totalLeverage)} (${formatNumber(totalSize)}x${totalLeverage.toFixed(1)})`;
-            posEntryPriceEl.textContent = `${formatNumber(avgEntryPrice)}`;
-            posLiquidationPriceEl.textContent = `${formatNumber(liquidationPrice)}`;
-            posLiquidationPriceEl.className = 'negative'; // Zawsze czerwony
-            posPlEl.textContent = `${formatNumber(pnl)}`;
-            posPlEl.className = pnl >= 0 ? 'positive' : 'negative';
+            // Desktop
+            posDirectionEl.textContent = direction;
+            posDirectionEl.className = directionClass;
+            posSizeEl.textContent = sizeText;
+            posEntryPriceEl.textContent = entryPriceText;
+            posLiquidationPriceEl.textContent = liquidationPriceText;
+            posLiquidationPriceEl.className = 'negative';
+            posPlEl.textContent = pnlText;
+            posPlEl.className = pnlClass;
+            
+            // Mobile
+            if (posDirectionMobileEl) {
+                posDirectionMobileEl.textContent = direction;
+                posDirectionMobileEl.className = directionClass;
+            }
+            if (posSizeMobileEl) posSizeMobileEl.textContent = sizeText;
+            if (posEntryPriceMobileEl) posEntryPriceMobileEl.textContent = entryPriceText;
+            if (posLiquidationPriceMobileEl) {
+                posLiquidationPriceMobileEl.textContent = liquidationPriceText;
+                posLiquidationPriceMobileEl.className = 'negative';
+            }
+            if (posPlMobileEl) {
+                posPlMobileEl.textContent = pnlText;
+                posPlMobileEl.className = pnlClass;
+            }
         } else {
+            // Desktop
             posDirectionEl.textContent = '--';
             posDirectionEl.className = 'neutral';
             posSizeEl.textContent = '--';
@@ -1242,6 +1335,22 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             posLiquidationPriceEl.className = 'neutral';
             posPlEl.textContent = '$0.00';
             posPlEl.className = 'neutral';
+            
+            // Mobile
+            if (posDirectionMobileEl) {
+                posDirectionMobileEl.textContent = '--';
+                posDirectionMobileEl.className = 'neutral';
+            }
+            if (posSizeMobileEl) posSizeMobileEl.textContent = '--';
+            if (posEntryPriceMobileEl) posEntryPriceMobileEl.textContent = '--';
+            if (posLiquidationPriceMobileEl) {
+                posLiquidationPriceMobileEl.textContent = '--';
+                posLiquidationPriceMobileEl.className = 'neutral';
+            }
+            if (posPlMobileEl) {
+                posPlMobileEl.textContent = '$0.00';
+                posPlMobileEl.className = 'neutral';
+            }
         }
     }
 
@@ -1810,9 +1919,67 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     function syncAmountControls(source) {
         if (source === 'slider') {
             amountInput.value = amountSlider.value;
+            if (amountMobileInput) amountMobileInput.value = amountSlider.value;
+            if (amountMobileSlider) amountMobileSlider.value = amountSlider.value;
         } else {
             amountSlider.value = amountInput.value;
+            if (amountMobileInput) amountMobileInput.value = amountInput.value;
+            if (amountMobileSlider) amountMobileSlider.value = amountInput.value;
+            updateSliderFill(amountSlider);
+            if (amountMobileSlider) updateSliderFill(amountMobileSlider);
         }
+    }
+
+    function syncAmountControlsMobile(source) {
+        if (source === 'slider') {
+            if (amountMobileInput) amountMobileInput.value = amountMobileSlider.value;
+            amountInput.value = amountMobileSlider.value;
+            amountSlider.value = amountMobileSlider.value;
+        } else {
+            if (amountMobileSlider) amountMobileSlider.value = amountMobileInput.value;
+            amountInput.value = amountMobileInput.value;
+            amountSlider.value = amountMobileInput.value;
+            if (amountMobileSlider) updateSliderFill(amountMobileSlider);
+            updateSliderFill(amountSlider);
+        }
+    }
+
+    function syncLeverageControls() {
+        const leverageValue = leverageInput.value;
+        if (leverageMobileInput) leverageMobileInput.value = leverageValue;
+        if (leverageValueEl) leverageValueEl.textContent = `${leverageValue}x`;
+        if (leverageMobileValueEl) leverageMobileValueEl.textContent = `${leverageValue}x`;
+        updateSliderFill(leverageInput);
+        if (leverageMobileInput) updateSliderFill(leverageMobileInput);
+    }
+
+    function syncLeverageControlsMobile() {
+        const leverageValue = leverageMobileInput.value;
+        leverageInput.value = leverageValue;
+        if (leverageValueEl) leverageValueEl.textContent = `${leverageValue}x`;
+        if (leverageMobileValueEl) leverageMobileValueEl.textContent = `${leverageValue}x`;
+        updateSliderFill(leverageInput);
+        updateSliderFill(leverageMobileInput);
+    }
+
+    function syncAssetSelection() {
+        const assetValue = assetSelect.value;
+        if (assetMobileSelect) assetMobileSelect.value = assetValue;
+    }
+
+    function syncAssetSelectionMobile() {
+        const assetValue = assetMobileSelect.value;
+        assetSelect.value = assetValue;
+    }
+
+    function syncIntervalSelection() {
+        const intervalValue = intervalSelect.value;
+        if (intervalMobileSelect) intervalMobileSelect.value = intervalValue;
+    }
+
+    function syncIntervalSelectionMobile() {
+        const intervalValue = intervalMobileSelect.value;
+        intervalSelect.value = intervalValue;
     }
 
     // --- PODPIĘCIE EVENTÓW I START ---
@@ -1825,7 +1992,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         resetAndStartGame();
         showNotification('Gra zrestartowana!', 'info');
     });
-    leverageInput.addEventListener('input', () => { leverageValueEl.textContent = `${leverageInput.value}x`; updateSliderFill(leverageInput); });
+    leverageInput.addEventListener('input', () => { syncLeverageControls(); });
     amountSlider.addEventListener('input', () => { syncAmountControls('slider'); updateSliderFill(amountSlider); });
     amountInput.addEventListener('input', () => { syncAmountControls('input'); updateSliderFill(amountSlider); });
     longBtn.addEventListener('click', () => openPosition('long'));
@@ -1833,6 +2000,49 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     closeBtn.addEventListener('click', closePosition);
     nextCandleBtn.addEventListener('click', showNextCandle);
     marginModeInputs.forEach(input => input.addEventListener('change', handleMarginChange));
+    assetSelect.addEventListener('change', syncAssetSelection);
+    intervalSelect.addEventListener('change', syncIntervalSelection);
+
+    // Event listenery dla elementów mobilnych
+    if (leverageMobileInput) {
+        leverageMobileInput.addEventListener('input', () => { syncLeverageControlsMobile(); });
+    }
+    if (amountMobileSlider) {
+        amountMobileSlider.addEventListener('input', () => { syncAmountControlsMobile('slider'); updateSliderFill(amountMobileSlider); });
+    }
+    if (amountMobileInput) {
+        amountMobileInput.addEventListener('input', () => { syncAmountControlsMobile('input'); updateSliderFill(amountMobileSlider); });
+    }
+    if (longMobileBtn) {
+        longMobileBtn.addEventListener('click', () => openPosition('long'));
+    }
+    if (shortMobileBtn) {
+        shortMobileBtn.addEventListener('click', () => openPosition('short'));
+    }
+    if (closeMobileBtn) {
+        closeMobileBtn.addEventListener('click', closePosition);
+    }
+    if (nextCandleMobileBtn) {
+        nextCandleMobileBtn.addEventListener('click', showNextCandle);
+    }
+    if (marginModeMobileInputs) {
+        marginModeMobileInputs.forEach(input => input.addEventListener('change', handleMarginChange));
+    }
+    if (assetMobileSelect) {
+        assetMobileSelect.addEventListener('change', () => {
+            syncAssetSelectionMobile();
+            saveAllSettings();
+            resetAndStartGame();
+        });
+    }
+    if (intervalMobileSelect) {
+        intervalMobileSelect.addEventListener('change', () => {
+            syncIntervalSelectionMobile();
+            saveAllSettings();
+            resetAndStartGame();
+            showNotification('Gra zrestartowana!', 'info');
+        });
+    }
 
     toggleRsiBtn.addEventListener('click', () => {
         gameState.showRSI = !gameState.showRSI;
@@ -1868,6 +2078,57 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         updateIndicators();
         saveAllSettings();
     });
+
+    // Event listenery dla przycisków wskaźników mobilnych
+    if (toggleRsiMobileBtn) {
+        toggleRsiMobileBtn.addEventListener('click', () => {
+            gameState.showRSI = !gameState.showRSI;
+            toggleRsiBtn.classList.toggle('active', gameState.showRSI);
+            toggleRsiMobileBtn.classList.toggle('active', gameState.showRSI);
+            updateIndicators();
+            saveAllSettings();
+        });
+    }
+
+    if (toggleMacdMobileBtn) {
+        toggleMacdMobileBtn.addEventListener('click', () => {
+            gameState.showMACD = !gameState.showMACD;
+            toggleMacdBtn.classList.toggle('active', gameState.showMACD);
+            toggleMacdMobileBtn.classList.toggle('active', gameState.showMACD);
+            updateIndicators();
+            saveAllSettings();
+        });
+    }
+
+    if (toggleBbMobileBtn) {
+        toggleBbMobileBtn.addEventListener('click', () => {
+            gameState.showBB = !gameState.showBB;
+            toggleBbBtn.classList.toggle('active', gameState.showBB);
+            toggleBbMobileBtn.classList.toggle('active', gameState.showBB);
+            updateIndicators();
+            saveAllSettings();
+        });
+    }
+
+    if (toggleEmaMobileBtn) {
+        toggleEmaMobileBtn.addEventListener('click', () => {
+            gameState.showEMA = !gameState.showEMA;
+            toggleEmaBtn.classList.toggle('active', gameState.showEMA);
+            toggleEmaMobileBtn.classList.toggle('active', gameState.showEMA);
+            updateIndicators();
+            saveAllSettings();
+        });
+    }
+
+    if (toggleTmaMobileBtn) {
+        toggleTmaMobileBtn.addEventListener('click', () => {
+            gameState.showTMA = !gameState.showTMA;
+            toggleTmaBtn.classList.toggle('active', gameState.showTMA);
+            toggleTmaMobileBtn.classList.toggle('active', gameState.showTMA);
+            updateIndicators();
+            saveAllSettings();
+        });
+    }
 
     document.addEventListener('keydown', (event) => {
         // Pomiń skróty klawiszowe na urządzeniach mobilnych
@@ -2072,10 +2333,52 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         }
     });
 
+    // Funkcja inicjalizacji elementów mobilnych
+    function initializeMobileElements() {
+        // Synchronizuj początkowe wartości z elementami mobilnymi
+        if (assetMobileSelect && assetSelect) {
+            assetMobileSelect.value = assetSelect.value;
+        }
+        if (intervalMobileSelect && intervalSelect) {
+            intervalMobileSelect.value = intervalSelect.value;
+        }
+        if (amountMobileInput && amountInput) {
+            amountMobileInput.value = amountInput.value;
+        }
+        if (amountMobileSlider && amountSlider) {
+            amountMobileSlider.value = amountSlider.value;
+            amountMobileSlider.max = amountSlider.max;
+        }
+        if (leverageMobileInput && leverageInput) {
+            leverageMobileInput.value = leverageInput.value;
+        }
+        
+        // Synchronizuj stan przycisków margin mode
+        const checkedDesktop = document.querySelector('input[name="margin-mode"]:checked');
+        if (checkedDesktop && marginModeMobileInputs) {
+            marginModeMobileInputs.forEach(input => {
+                if (input.value === checkedDesktop.value) {
+                    input.checked = true;
+                }
+            });
+        }
+    }
+
     // Funkcja inicjalizacji
     function initializeGame() {
+        // Wykryj urządzenia mobilne
+        if (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            document.body.classList.add('mobile');
+            console.log('Wykryto urządzenie mobilne');
+        }
+        
         // Załaduj zapisane ustawienia
         const settingsLoaded = loadGameSettings();
+        
+        // Inicjalizuj elementy mobilne po załadowaniu ustawień
+        if (document.body.classList.contains('mobile')) {
+            initializeMobileElements();
+        }
         
         // Ustaw początkowe stany modali
         if (gameRulesModal) {

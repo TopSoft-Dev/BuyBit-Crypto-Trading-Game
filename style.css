@@ -1064,6 +1064,28 @@ input[type="range"]:hover::-moz-range-thumb {
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Ukrywanie/pokazywanie elementów */
+.mobile-only {
+    display: none;
+}
+
+.mobile .mobile-only {
+    display: block !important;
+}
+
+.mobile .chart-and-right-panel-wrapper {
+    display: none !important;
+}
+
+.mobile #indicator-controls {
+    display: none !important;
+}
+
+/* Ukryj elementy mobilne na desktopie */
+body:not(.mobile) .mobile-only {
+    display: none !important;
+}
+
 .mobile .app-container {
     padding: 5px;
     min-height: 100vh;
@@ -1074,66 +1096,145 @@ input[type="range"]:hover::-moz-range-thumb {
     padding: 8px;
 }
 
+/* Nowy layout mobilny */
+.mobile .header {
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 10px;
+}
+
 .mobile #logo-and-controls {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .mobile .header .logo {
-    order: 1;
     flex: 0 0 auto;
-    text-align: center;
+}
+
+.mobile .header .logo img {
+    height: 40px;
 }
 
 .mobile .header .header-buttons {
-    order: 2;
     display: flex;
-    gap: 5px;
-    justify-content: space-between;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
 }
 
 .mobile .header .header-btn {
     flex: 1;
-    min-width: 0;
-    font-size: 11px;
-    padding: 6px 4px;
+    max-width: 80px;
+    font-size: 10px;
+    padding: 8px 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-radius: 6px;
 }
 
 .mobile .header #account-info {
-    order: 3;
-    flex: 0 0 auto;
-    font-size: 12px;
+    display: none; /* Ukrywamy na mobilnych - będzie w osobnej karcie */
+}
+
+/* Karta ustawień gry */
+.mobile .game-settings-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
+.mobile .game-settings-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--bybit-yellow);
+    font-size: 14px;
     text-align: center;
-    margin-top: 5px;
 }
 
-.mobile #header-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
+.mobile .settings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-.mobile #asset-selection,
-.mobile #interval-selection {
+.mobile .settings-row:last-child {
+    margin-bottom: 0;
+}
+
+.mobile .setting-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.mobile #asset-selection label,
-.mobile #interval-selection label {
+.mobile .setting-item label {
+    font-size: 11px;
+    color: #ccc;
+    font-weight: bold;
+}
+
+.mobile .setting-item select {
+    padding: 6px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    border: 1px solid #444;
+    color: var(--text-color);
+}
+
+.mobile .margin-mode-mobile {
+    grid-column: 1 / -1;
+}
+
+.mobile .margin-mode-mobile .radio-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.mobile .margin-mode-mobile .radio-group label {
+    font-size: 12px;
+    padding: 6px 12px;
+    background-color: var(--bg-color);
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mobile .margin-mode-mobile .radio-group input[type="radio"]:checked + label {
+    background-color: var(--bybit-yellow);
+    color: var(--bg-color);
+}
+
+/* Karta informacji o saldzie */
+.mobile .balance-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+    text-align: center;
+}
+
+.mobile .balance-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 12px;
 }
 
-.mobile #asset-selection select,
-.mobile #interval-selection select {
-    padding: 8px;
-    font-size: 14px;
+.mobile .balance-info span {
+    font-weight: bold;
 }
 
 .mobile .main-content {
@@ -1146,148 +1247,268 @@ input[type="range"]:hover::-moz-range-thumb {
     gap: 10px;
 }
 
+/* Karta wykresu */
+.mobile .chart-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
 .mobile .chart-section {
     order: 1;
     width: 100%;
-    height: 50vh;
-    min-height: 300px;
+    height: 45vh;
+    min-height: 280px;
 }
 
 .mobile .chart-container {
     height: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Karta tradingowa */
+.mobile .trading-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
+.mobile .trading-card h3 {
+    margin: 0 0 15px 0;
+    color: var(--bybit-yellow);
+    font-size: 14px;
+    text-align: center;
 }
 
 .mobile .trading-panel {
     order: 2;
     width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    margin-left: 0;
-    margin-top: 0;
+    padding: 0;
+    border-radius: 0;
+    margin: 0;
+    background: transparent;
 }
 
 .mobile .controls-row {
+    display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
 }
 
 .mobile .control-group {
     width: 100%;
+    margin-bottom: 15px;
 }
 
 .mobile .control-group label {
     font-size: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    color: #ccc;
+    font-weight: bold;
+    display: block;
 }
 
 .mobile .control-group select,
-.mobile .control-group input {
+.mobile .control-group input[type="number"] {
+    width: 100%;
     font-size: 14px;
-    padding: 8px;
-    border-radius: 4px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: var(--bg-color);
+    border: 1px solid #444;
+    color: var(--text-color);
 }
 
 .mobile .amount-controls {
+    display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 .mobile .amount-input-group {
+    display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 }
 
-.mobile .amount-input-group input {
+.mobile .amount-input-group input[type="range"] {
+    width: 100%;
+    height: 40px;
+}
+
+.mobile .amount-input-group input[type="number"] {
     width: 100%;
 }
 
 .mobile .leverage-control {
-    margin: 10px 0;
+    margin: 0;
+}
+
+.mobile .leverage-control .label-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
 }
 
 .mobile .leverage-control input[type="range"] {
     width: 100%;
-    height: 30px;
+    height: 40px;
 }
 
 .mobile .trading-buttons {
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     margin-top: 15px;
 }
 
 .mobile .trading-buttons .btn {
-    width: 100%;
-    padding: 12px;
+    padding: 14px;
     font-size: 16px;
     font-weight: bold;
-    border-radius: 6px;
+    border-radius: 8px;
+}
+
+.mobile .control-group:has(#close-btn) {
+    margin-top: 10px;
+}
+
+.mobile #close-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+/* Karta pozycji */
+.mobile .position-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
+.mobile .position-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--bybit-yellow);
+    font-size: 14px;
+    text-align: center;
 }
 
 .mobile .position-info {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 6px;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
     font-size: 12px;
+    background: transparent;
+}
+
+.mobile .position-info h2 {
+    display: none; /* Ukrywamy duplikujący się tytuł */
 }
 
 .mobile .position-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 0;
 }
 
 .mobile .position-details div {
-    padding: 4px;
+    padding: 8px;
+    background-color: var(--bg-color);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 11px;
+    border: 1px solid #444;
+}
+
+/* Karta wskaźników */
+.mobile .indicators-card {
     background-color: var(--secondary-color);
-    border-radius: 4px;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
+.mobile .indicators-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--bybit-yellow);
+    font-size: 14px;
     text-align: center;
 }
 
 .mobile .indicators-panel {
     order: 3;
     width: 100%;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
 .mobile .indicators-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 5px;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
 }
 
 .mobile .indicators-buttons .btn {
-    padding: 6px 4px;
-    font-size: 10px;
-    border-radius: 4px;
+    padding: 8px 4px;
+    font-size: 11px;
+    border-radius: 6px;
+    min-height: 36px;
+}
+
+/* Karta kontroli gry */
+.mobile .game-controls-card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 10px 10px 10px;
+    border: 1px solid var(--bybit-yellow);
+}
+
+.mobile .game-controls-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--bybit-yellow);
+    font-size: 14px;
+    text-align: center;
 }
 
 .mobile .game-controls {
     order: 4;
     width: 100%;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 0;
+    border-radius: 0;
     text-align: center;
+    background: transparent;
 }
 
 .mobile .game-controls .btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 0;
+    border-radius: 8px;
 }
 
 /* Mobile modal adjustments */
 .mobile .modal-content {
-    width: 95%;
-    max-width: 95%;
-    margin: 10px;
+    width: 90%;
+    max-width: 90%;
+    margin: 20px;
     padding: 15px;
-    max-height: 90vh;
+    max-height: 80vh;
     overflow-y: auto;
+    border-radius: 12px;
 }
 
 .mobile .modal-content h2 {
