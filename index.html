@@ -85,26 +85,19 @@
 
             <!-- Karta wykresu (mobilne) -->
             <div class="chart-card mobile-only">
-                <!-- Saldo i czas przeniesione do karty wykresu -->
-                <div class="balance-info-chart">
-                    <div class="balance-row">
-                        <div class="balance-item">
-                            <span>Saldo: <span id="balance-mobile">$10000</span></span>
-                        </div>
-                        <div class="balance-item">
-                            <span id="total-pl-mobile" class="neutral">($0.00)</span>
-                        </div>
-                        <div class="balance-item">
-                            <span>Czas: <span id="time-left-mobile">--:--</span></span>
-                        </div>
+                <!-- Trzy osobne karty w jednej linii -->
+                <div class="info-cards-row">
+                    <div class="info-card balance-card-mini">
+                        <div class="card-title">Saldo</div>
+                        <div class="card-value" id="balance-mobile">$10000</div>
                     </div>
-                    <div class="position-info-compact">
-                        <div class="position-item">
-                            <span>Pozycja: <span id="pos-direction-compact">--</span></span>
-                        </div>
-                        <div class="position-item">
-                            <span>P/L: <span id="pos-pl-compact" class="neutral">$0.00</span></span>
-                        </div>
+                    <div class="info-card change-card-mini">
+                        <div class="card-title">Zmiana</div>
+                        <div class="card-value" id="total-pl-mobile">($0.00)</div>
+                    </div>
+                    <div class="info-card time-card-mini">
+                        <div class="card-title">Czas</div>
+                        <div class="card-value" id="time-left-mobile">--:--</div>
                     </div>
                 </div>
                 

@@ -213,8 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const posPlMobileEl = document.getElementById('pos-pl-mobile');
     
     // Kompaktowe elementy pozycji w karcie wykresu
-    const posDirectionCompactEl = document.getElementById('pos-direction-compact');
-    const posPlCompactEl = document.getElementById('pos-pl-compact');
+    
     const marginModeMobileInputs = document.querySelectorAll('input[name="margin-mode-mobile"]');
     const notificationPopup = document.getElementById('notification-popup');
     const toggleRsiBtn = document.getElementById('toggle-rsi-btn');
@@ -1434,14 +1433,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             }
             
             // Kompaktowe elementy w karcie wykresu
-            if (posDirectionCompactEl) {
-                posDirectionCompactEl.textContent = direction;
-                posDirectionCompactEl.className = directionClass;
-            }
-            if (posPlCompactEl) {
-                posPlCompactEl.textContent = pnlText;
-                posPlCompactEl.className = pnlClass;
-            }
+            
         } else {
             // Desktop
             posDirectionEl.textContent = '--';
@@ -1470,14 +1462,7 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             }
             
             // Kompaktowe elementy w karcie wykresu
-            if (posDirectionCompactEl) {
-                posDirectionCompactEl.textContent = '--';
-                posDirectionCompactEl.className = 'neutral';
-            }
-            if (posPlCompactEl) {
-                posPlCompactEl.textContent = '$0.00';
-                posPlCompactEl.className = 'neutral';
-            }
+            
         }
     }
 

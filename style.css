@@ -1166,65 +1166,67 @@ body:not(.mobile) .mobile-only {
     justify-content: center;
 }
 
-/* Połączenie karty salda z wykresem */
-.mobile .balance-info-chart {
+/* Trzy osobne karty w jednej linii */
+.mobile .info-cards-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile .info-card {
+    flex: 1;
+    background-color: var(--secondary-color);
+    border: 2px solid var(--bybit-orange);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 8px 12px;
-    background-color: var(--secondary-color);
-    border-radius: 8px;
-    margin-bottom: 10px;
-    border: 2px solid var(--bybit-orange);
+    gap: 4px;
+}
+
+.mobile .info-card .card-title {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.mobile .info-card .card-value {
     font-size: 12px;
-}
-
-.mobile .balance-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 4px;
-    width: 100%;
-}
-
-.mobile .balance-item {
-    flex: 1;
-    text-align: center;
-    min-width: 0;
-}
-
-.mobile .balance-item span {
-    white-space: nowrap;
     font-weight: bold;
-    font-size: 10px;
-    display: block;
-}
-
-.mobile .position-info-compact {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11px;
-    padding: 4px 8px;
-    background-color: var(--bg-color);
-    border-radius: 4px;
-    border: 1px solid var(--bybit-orange);
-    gap: 4px;
-}
-
-.mobile .position-item {
-    flex: 1;
-    text-align: center;
-    min-width: 0;
-}
-
-.mobile .position-item span {
+    color: var(--text-color);
     white-space: nowrap;
-    font-weight: bold;
-    font-size: 10px;
-    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* Kolory dla różnych typów kart */
+.mobile .balance-card-mini .card-value {
+    color: var(--bybit-orange);
+}
+
+.mobile .change-card-mini .card-value.positive {
+    color: var(--green-color);
+}
+
+.mobile .change-card-mini .card-value.negative {
+    color: var(--red-color);
+}
+
+.mobile .change-card-mini .card-value.neutral {
+    color: var(--text-color);
+}
+
+.mobile .time-card-mini .card-value {
+    color: var(--bybit-yellow);
+}
+
+
 
 /* Style dla przycisków tradingowych pod wykresem */
 .mobile .trading-buttons-chart {
@@ -2032,13 +2034,19 @@ body:not(.mobile) .mobile-only {
 
 /* Poprawka dla responsywności na małych ekranach */
 @media (max-width: 480px) {
-    .mobile .balance-row {
-        flex-direction: column;
-        align-items: flex-start;
+    .mobile .info-cards-row {
         gap: 4px;
     }
     
-    .mobile .balance-row span {
+    .mobile .info-card {
+        padding: 6px 4px;
+    }
+    
+    .mobile .info-card .card-title {
+        font-size: 9px;
+    }
+    
+    .mobile .info-card .card-value {
         font-size: 11px;
     }
     
@@ -2051,11 +2059,7 @@ body:not(.mobile) .mobile-only {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .mobile .position-info-compact {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2px;
-    }
+
 }
 
 /* Dodaj style dla aktywnych przycisków wskaźników mobilnych */
