@@ -1184,14 +1184,16 @@ body:not(.mobile) .mobile-only {
     justify-content: space-between;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
 }
 
 .mobile .balance-row span {
     white-space: nowrap;
     font-weight: bold;
-    font-size: 12px;
-    flex-shrink: 0;
+    font-size: 11px;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
 .mobile .position-info-compact {
@@ -1221,7 +1223,9 @@ body:not(.mobile) .mobile-only {
 
 .mobile .long-short-buttons {
     display: flex;
+    flex-direction: row !important;
     gap: 8px;
+    width: 100%;
 }
 
 .mobile .long-short-buttons .btn {
@@ -1538,18 +1542,40 @@ body:not(.mobile) .mobile-only {
 
 .mobile .leverage-control {
     margin: 0;
+    margin-bottom: 8px;
 }
 
 .mobile .leverage-control .label-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .mobile .leverage-control input[type="range"] {
     width: 100%;
     height: 40px;
+}
+
+.mobile .amount-label-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.mobile .amount-label-input label {
+    flex: 1;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.mobile .amount-label-input input[type="number"] {
+    flex: 1;
+    max-width: 100px;
+    padding: 6px;
+    border-radius: 4px;
 }
 
 .mobile .trading-buttons {
@@ -1842,12 +1868,12 @@ body:not(.mobile) .mobile-only {
 
 /* Lepsze odstępy na mobilnych */
 .mobile .control-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .mobile .control-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: bold;
 }
 

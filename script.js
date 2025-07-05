@@ -539,6 +539,11 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
     function autoFitChart() {
         if (!chart || !chart.timeScale) return;
         
+        // W wersji mobilnej, nie resetuj pozycji wykresu podczas gry
+        if (document.body.classList.contains('mobile') && gameStarted) {
+            return; // Nie rób nic w wersji mobilnej po rozpoczęciu gry
+        }
+        
         // Teraz gdy linia likwidacji jest w osobnym panelu, możemy użyć standardowego fitContent
         setTimeout(() => {
             chart.timeScale().fitContent();
@@ -934,9 +939,11 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
             if (chart && activeChartContainer) {
                 const containerRect = activeChartContainer.getBoundingClientRect();
                 
-                // Sprawdź czy kontener jest widoczny na ekranie
-                const isVisible = containerRect.top < window.innerHeight && containerRect.bottom > 0;
-                if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
+                // W wersji mobilnej, sprawdź czy kontener jest widoczny na ekranie
+                if (document.body.classList.contains('mobile')) {
+                    const isVisible = containerRect.top < window.innerHeight && containerRect.bottom > 0;
+                    if (!isVisible) return; // Nie rób nic jeśli wykres nie jest widoczny
+                }
                 
                 const width = Math.max(containerRect.width, 400);
                 const height = Math.max(containerRect.height, 300);
@@ -1045,7 +1052,10 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         candleSeries.setData(initialCandles);
         
         // Automatyczne dopasowanie zoom do widocznych świec tylko przy starcie
-        autoFitChart();
+        // W wersji mobilnej, ustaw zoom tylko przy pierwszym uruchomieniu
+        if (!document.body.classList.contains('mobile') || !gameStarted) {
+            autoFitChart();
+        }
         
         gameState.isGameReady = true;
         updateUI();
@@ -1726,7 +1736,21 @@ let tmaUpperSeries, tmaLowerSeries, tmaMiddleSeries; // TMA Bands
         loadGameSettings();
         updateUI();
         updatePositionInfo();
-        loadData();
+        
+        // W wersji mobilnej, zachowaj obecną pozycję wykresu jeśli gra już się rozpoczęła
+        if (document.body.classList.contains('mobile') && gameStarted && chart) {
+            // Zachowaj obecny zakres wykresu
+            const currentRange = chart.timeScale().getVisibleRange();
+            loadData();
+            // Przywróć zakres po załadowaniu danych
+            setTimeout(() => {
+                if (currentRange && chart) {
+                    chart.timeScale().setVisibleRange(currentRange);
+                }
+            }, 100);
+        } else {
+            loadData();
+        }
     }
 
     // --- FUNKCJE TABELI WYNIKÓW ---
